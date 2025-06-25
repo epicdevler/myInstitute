@@ -11,7 +11,7 @@ It is configured to serve **different parts of the site based on the domain or s
 | Domain                    | Purpose         | Served From                     |
 |---------------------------|------------------|----------------------------------|
 | `www.websitedomain.com`   | Website Page     | `app/(website)/page.tsx`         |
-| `app.websitedomain.com`   | Main Application | `app/(app)/page.tsx`             |
+| `app.websitedomain.com`   | Main Application | `app/(app)/dashboard/page.tsx`   |
 
 Both are served from a single Next.js project using folder-based routing and conditional rewrites.
 
