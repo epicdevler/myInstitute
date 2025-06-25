@@ -7,5 +7,7 @@ import { Heading } from "@chakra-ui/react";
  * * @returns {JSX.Element} The password reset request page component.
  **/
 export default function Page(){
+
+
     return <Heading>Password Change Request</Heading>
 }
