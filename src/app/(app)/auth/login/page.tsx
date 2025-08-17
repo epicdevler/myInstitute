@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useState, useTransition } from "react";
-import { commonProps } from "../signup/page";
+import { commonProps } from "../signup/commonProps";
 
 import { toaster } from "@/app/components/ui/toaster";
 import { PouchUserRepository } from "@/lib/repositories/PouchUserRepo";

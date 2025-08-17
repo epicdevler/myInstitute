@@ -12,7 +12,6 @@ import {
   HStack,
   Input,
   InputGroup,
-  InputProps,
   Portal,
   Select,
   Spinner,
@@ -28,11 +27,7 @@ import {
   useTransition,
   useMemo,
 } from "react";
-
-export const commonProps: InputProps = {
-  rounded: "full",
-  size: "sm",
-};
+import { commonProps } from "./commonProps";
 
 type LoginFields = {
   firstName: string;

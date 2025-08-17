@@ -26,7 +26,7 @@ import { useRouter } from "nextjs-toploader/app";
 import { use, useState, useTransition } from "react";
 import EmptyStateIllustration from "../../../../../public/assets/empty_state.svg";
 
-export default function StudentHomePage() {
+export default function StudentRegisterCourse() {
   const router = useRouter();
   const { isLoading, courses, error } = useLoadCourses({ enabled: true });
   const { user, setLoggingOut } = use(UserContext);
@@ -187,7 +187,7 @@ export default function StudentHomePage() {
   );
 }
 
-export function EmptyCourseState() {
+function EmptyCourseState() {
   return (
     <EmptyState.Root>
       <EmptyState.Content gap={2}>
