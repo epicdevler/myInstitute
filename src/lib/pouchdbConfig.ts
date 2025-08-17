@@ -1,10 +1,11 @@
 "use client";
-import PouchDb from "pouchdb-browser";
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-PouchDb.plugin(require("pouchdb-find").default);
+import PouchDb from "./pouchdbClient";
 
 export const UsersDB = (() => {
+  if (typeof window == undefined) {
+    return null as never;
+  }
   const db = new PouchDb("userDB", {});
 
   db.createIndex({
@@ -17,6 +18,9 @@ export const UsersDB = (() => {
 })();
 
 export const CoursesDB = (() => {
+  if (typeof window == undefined) {
+    return null as never;
+  }
   const db = new PouchDb("courseDB", {});
 
   db.createIndex({
@@ -29,6 +33,9 @@ export const CoursesDB = (() => {
 })();
 
 export const DepartmentsDB = (() => {
+  if (typeof window == undefined) {
+    return null as never;
+  }
   const db = new PouchDb("departmentDB", {});
 
   db.createIndex({
