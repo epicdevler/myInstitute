@@ -1,3 +1,5 @@
+
+'use client'
 import bcrypt from "bcryptjs";
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import { collection } from "firebase/firestore";

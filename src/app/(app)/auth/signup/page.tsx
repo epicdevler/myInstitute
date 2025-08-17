@@ -2,7 +2,7 @@
 import { Field } from "@/app/components/ui/field";
 import { PasswordInput } from "@/app/components/ui/password-input";
 import { toaster } from "@/app/components/ui/toaster";
-import { useLoadDepartments } from "@/app/hooks/useLoadDepartments";
+import { useLoadDepartments } from "@/app/(app)/dashboard/tabs/departments/useLoadDepartments";
 import { PouchUserRepository } from "@/lib/repositories/PouchUserRepo";
 import {
   Alert,

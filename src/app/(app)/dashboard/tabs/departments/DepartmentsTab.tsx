@@ -20,7 +20,7 @@ import {
 } from "@chakra-ui/react";
 import { MoreVerticalIcon, PlusIcon } from "lucide-react";
 import { useCallback, useState, useTransition } from "react";
-import { useLoadDepartments } from "../../../../hooks/useLoadDepartments";
+import { useLoadDepartments } from "./useLoadDepartments";
 import EmptyState from "../../EmptyState";
 import DepartmentDialog from "./dialog/Dialog";
 

@@ -1,3 +1,4 @@
+'use client'
 import bcrypt from "bcryptjs";
 import { deleteCookie, setCookie } from "cookies-next";
 import {

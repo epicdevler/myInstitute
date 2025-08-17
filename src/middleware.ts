@@ -17,7 +17,7 @@ export function middleware(req: NextRequest) {
       adminRoutes.includes(pathname) ||
       studentRoutes.includes(pathname))
   ) {
-    return NextResponse.redirect(new URL("auth/login", req.url));
+    return NextResponse.redirect(new URL("auth/", req.url));
   }
 
   if (

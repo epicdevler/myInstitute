@@ -1,6 +1,6 @@
 import { Field } from "@/app/components/ui/field";
 import { toaster } from "@/app/components/ui/toaster";
-import { useLoadDepartments } from "@/app/hooks/useLoadDepartments";
+import { useLoadDepartments } from "@/app/(app)/dashboard/tabs/departments/useLoadDepartments";
 import { Course } from "@/lib/models/Course";
 import { PouchCourseRepository } from "@/lib/repositories/PouchCourseRepo";
 import {
