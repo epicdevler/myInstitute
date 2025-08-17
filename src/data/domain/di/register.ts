@@ -1,3 +1,0 @@
-/**
- * Implement tsyringe
- */
