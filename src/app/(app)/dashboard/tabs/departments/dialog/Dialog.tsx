@@ -1,7 +1,8 @@
 import { Field } from "@/app/components/ui/field";
 import { toaster } from "@/app/components/ui/toaster";
-import { PouchDepartmentRepository } from "@/lib/repositories/PouchDepartmentRepo";
+import { DepartmentRepository } from "@/lib/repositories/remote/DepartmentRepo";
 import {
+  Alert,
   Button,
   CloseButton,
   Dialog,
@@ -38,12 +39,13 @@ export default function DepartmentDialog({
 
   const handleSubmit = (event: FormEvent<HTMLDivElement>) => {
     event.preventDefault();
+    setErrors((prev) => ({ ...prev, submitError: undefined }));
     submitTransition(async () => {
       if (fieldHasErrors()) {
         return;
       }
 
-      const response = await new PouchDepartmentRepository().add(values);
+      const response = await new DepartmentRepository().add(values);
 
       if (!response.success) {
         setErrors((prev) => ({ ...prev, submitError: response.message }));
@@ -137,6 +139,14 @@ export default function DepartmentDialog({
                   />
                 </Field>
               </HStack>
+
+              <Alert.Root mt={5} hidden={!errors.submitError} status={"error"} >
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Title>Login Failed</Alert.Title>
+                  <Alert.Description>{errors.submitError}</Alert.Description>
+                </Alert.Content>
+              </Alert.Root>
             </Dialog.Body>
             <Dialog.Footer mt={10}>
               <Dialog.ActionTrigger asChild>

@@ -1,59 +1,34 @@
 "use client";
 import { CourseItem } from "@/app/(app)/(students)/student/CourseItem";
 import { ErrorState } from "@/app/components/ErrorState";
-import { Course } from "@/lib/models/Course";
-import { PouchCourseRepository } from "@/lib/repositories/PouchCourseRepo";
+import { useLevelFilter } from "@/app/hooks/useLevelFilter";
+import { useLoadCourses } from "@/app/hooks/useLoadCourses";
 import {
   Box,
   Button,
   GridItem,
   Heading,
   HStack,
+  Separator,
   SimpleGrid,
   Spinner,
 } from "@chakra-ui/react";
 import { PlusIcon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import EmptyState from "../../EmptyState";
 import CourseDialog from "./dialog/Dialog";
-
-function useLoadCourses() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadingError, setLoadingError] = useState<string>();
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [retry, setRetry] = useState(0);
-
-  useEffect(() => {
-    const invoke = async () => {
-      setLoadingError(undefined);
-
-      const response = await new PouchCourseRepository().getAll();
-
-      if (!response.success) {
-        setLoadingError(response.message);
-        setIsLoading(false);
-        return;
-      }
-
-      setCourses(response.data!);
-      setIsLoading(false);
-    };
-
-    invoke();
-  }, [retry]);
-
-  return {
-    isLoading,
-    loadingError,
-    courses,
-    retry: () => {
-      setRetry((prev) => prev + 1);
-    },
-  };
-}
+import { LevelFilter } from "../../../../components/LevelFilter";
+import useGroupCourse from "@/app/hooks/useGroupCourse";
 
 export default function CoursesTab() {
-  const { isLoading, loadingError, courses, retry } = useLoadCourses();
+  const {
+    isLoading,
+    error: loadingError,
+    courses,
+    onRetry,
+  } = useLoadCourses({ enabled: true });
+  const { filteredCourses, level, onSelect } = useLevelFilter(courses);
+  const groupedCourses = useGroupCourse(filteredCourses);
   const [selected, setSelected] = useState<string>();
   const [openAddDialog, setOpenAddDialog] = useState(false);
 
@@ -63,23 +38,27 @@ export default function CoursesTab() {
       // return
       setOpenAddDialog((prev) => !prev);
       if (success == true) {
-        retry();
+        onRetry();
       }
     },
-    [retry]
+    [onRetry]
   );
   return (
     <>
-      <HStack justifyContent={"space-between"} py={5}>
-        <Heading>Courses</Heading>
-        <Button
-          onClick={() => toggleOpenAddDialog()}
-          variant={"outline"}
-          rounded="full"
-        >
-          <PlusIcon /> Add More
-        </Button>
-      </HStack>
+      <Box>
+        <HStack justifyContent={"space-between"} py={5}>
+          <Heading>Courses</Heading>
+          <Button
+            onClick={() => toggleOpenAddDialog()}
+            variant={"outline"}
+            rounded="full"
+          >
+            <PlusIcon /> Add More
+          </Button>
+        </HStack>
+
+        <LevelFilter value={level} onSelect={onSelect} />
+      </Box>
 
       {isLoading && (
         <Box p={5}>
@@ -93,39 +72,51 @@ export default function CoursesTab() {
 
       {!isLoading && !loadingError && (
         <>
-          {courses.length < 1 && (
+          {filteredCourses.length < 1 && (
             <EmptyState
               title={"No Course found"}
               message={"Add courses to see them here..."}
             />
           )}
 
-          {courses.length > 0 && (
-            <SimpleGrid columns={[2, null, 3]} gap={[2, null, 4]} mt={5}>
-              {courses.map((course) => {
-                return (
-                  <GridItem key={course.id} colSpan={2} bg="red" asChild>
-                    <CourseItem
-                      admin
-                      onClick={() => {
-                        if (selected == course.id) {
-                          setSelected(undefined);
-                          return;
-                        }
-                        setSelected(course.id);
-                      }}
-                      course={course}
-                      onSuccess={() => retry()}
-                    />
-                  </GridItem>
-                );
-              })}
-            </SimpleGrid>
+          {filteredCourses.length > 0 && (
+            <Box>
+              <Separator my={4} />
+              {Array.from(groupedCourses.keys()).map((semester) => (
+                <Box key={semester} mb={8}>
+                  <Heading size="md" mb={4} textTransform={"capitalize"}>
+                    {semester} Semester
+                  </Heading>
+                  <SimpleGrid columns={[2, null, 3]} gap={[2, null, 4]} mt={5}>
+                    {filteredCourses.map((course) => {
+                      return (
+                        <GridItem key={course.id} asChild>
+                          <CourseItem
+                            admin
+                            onClick={() => {
+                              if (selected == course.id) {
+                                setSelected(undefined);
+                                return;
+                              }
+                              setSelected(course.id);
+                            }}
+                            course={course}
+                            onSuccess={() => onRetry()}
+                          />
+                        </GridItem>
+                      );
+                    })}
+                  </SimpleGrid>
+                </Box>
+              ))}
+            </Box>
           )}
         </>
       )}
 
-      <CourseDialog open={openAddDialog} onClose={toggleOpenAddDialog} />
+      {openAddDialog && (
+        <CourseDialog open={openAddDialog} onClose={toggleOpenAddDialog} />
+      )}
     </>
   );
 }

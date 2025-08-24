@@ -8,9 +8,9 @@ import {
   serverTimestamp,
   where,
 } from "firebase/firestore";
-import { firestoreDB } from "../config";
-import { Course } from "../models/Course";
-import { DBResponse } from "./UserRepo";
+import { firestoreDB } from "./config";
+import { Course } from "../../models/Course";
+import { DBResponse } from "@/lib/utils/DBResponse";
 
 export class CourseRepository {
   courseCollection = collection(firestoreDB, "courses");
@@ -20,7 +20,7 @@ export class CourseRepository {
   ): Promise<DBResponse<undefined>> {
     return await runTransaction(firestoreDB, async (transaction) => {
       try {
-        const courseID = course.code.replaceAll("", "-");
+        const courseID = course.code.replaceAll(" ", "-");
         const courseDoc = doc(this.courseCollection, courseID);
         const existing = (await transaction.get(courseDoc)).exists();
 
@@ -159,8 +159,8 @@ export class CourseRepository {
     });
   }
 
-  async delete(id: string) {
-    await runTransaction(firestoreDB, async (transaction) => {
+  async delete(id: string): Promise<DBResponse<never>> {
+    return await runTransaction(firestoreDB, async (transaction) => {
       try {
         const courseDoc = doc(this.courseCollection, id);
 

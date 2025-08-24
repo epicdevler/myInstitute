@@ -1,14 +1,15 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { USER_COOKIE_KEY } from "./lib/models/User";
+import { NextResponse } from "next/server";
+import { UserCookieHandler } from "./lib/utils/UserCookie";
 
-export function middleware(req: NextRequest) {
-  const cookieData = req.cookies.get(USER_COOKIE_KEY)?.value;
+export async function middleware(req: NextRequest) {
+  const cookieData = await UserCookieHandler.get(req).then((data) => data.data);
 
   const adminRoutes = ["/dashboard", "/departments", "/courses"];
-  const studentRoutes = ["/student", "/register-courses"];
+  const studentRoutes = ["/student", "/register-course"];
 
   const pathname = req.nextUrl.pathname;
+
 
   // Redirect if not logged in
   if (
@@ -29,8 +30,8 @@ export function middleware(req: NextRequest) {
   }
 
   if (cookieData && pathname == "/") {
-    const { role } = JSON.parse(cookieData);
-    const nextValidRoute = role === "admin" ? "/dashboard" : "/student";
+    const { userType } = cookieData;
+    const nextValidRoute = userType === "admin" ? "/dashboard" : "/student";
     return NextResponse.rewrite(new URL(nextValidRoute, req.url));
   }
   // Later, we can also fetch user role here for role-based redirect
@@ -40,9 +41,9 @@ export function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/",
+    "/register-course",
     "/auth/:path*",
     "/dashboard/:path*",
     "/student/:path*",
-    "/register-courses",
   ],
 };

@@ -1,5 +1,5 @@
 "use client";
-import { PouchUserRepository } from "@/lib/repositories/PouchUserRepo";
+import { UserRepository } from "@/lib/repositories/remote/UserRepo";
 import {
   Button,
   ButtonGroup,
@@ -22,7 +22,7 @@ export default function LogoutButton() {
   const logOut = () => {
     logOutTransition(async () => {
       setLoggingOut(true);
-      const response = await new PouchUserRepository().logout();
+      const response = await new UserRepository().logout();
 
       if (!response.success) {
         setLogOutError(response.message);

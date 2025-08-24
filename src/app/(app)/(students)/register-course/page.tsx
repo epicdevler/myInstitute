@@ -2,10 +2,9 @@
 import { toaster } from "@/app/components/ui/toaster";
 import { UserContext } from "@/app/context/UserContext";
 import { useLoadCourses } from "@/app/hooks/useLoadCourses";
-import { PouchUserRepository } from "@/lib/repositories/PouchUserRepo";
+import { UserRepository } from "@/lib/repositories/remote/UserRepo";
 import {
   Alert,
-  Badge,
   Box,
   Button,
   CheckboxCard,
@@ -14,6 +13,7 @@ import {
   GridItem,
   Heading,
   HStack,
+  Separator,
   SimpleGrid,
   Span,
   Spinner,
@@ -25,11 +25,18 @@ import Link from "next/link";
 import { useRouter } from "nextjs-toploader/app";
 import { use, useState, useTransition } from "react";
 import EmptyStateIllustration from "../../../../../public/assets/empty_state.svg";
+import { CourseItem } from "../student/CourseItem";
+import { LevelFilter } from "../../../components/LevelFilter";
+import { useLevelFilter } from "../../../hooks/useLevelFilter";
+import useGroupCourse from "@/app/hooks/useGroupCourse";
 
 export default function StudentRegisterCourse() {
   const router = useRouter();
   const { isLoading, courses, error } = useLoadCourses({ enabled: true });
-  const { user, setLoggingOut } = use(UserContext);
+  const { filteredCourses, level, onSelect } = useLevelFilter(courses);
+  const groupedCourses = useGroupCourse(filteredCourses);
+
+  const { user } = use(UserContext);
 
   const [regCourseErr, setRegCourseErr] = useState<string>();
   const [isRegingCourse, startCourseReg] = useTransition();
@@ -40,7 +47,7 @@ export default function StudentRegisterCourse() {
 
   const regCourse = () => {
     startCourseReg(async () => {
-      const response = await new PouchUserRepository().registerCourses(
+      const response = await new UserRepository().registerCourses(
         user!.id,
         selectedCourse
       );
@@ -50,17 +57,12 @@ export default function StudentRegisterCourse() {
         return;
       }
 
-      setLoggingOut(true);
       if (user!.registeredCourses.length > 0) {
         toaster.success({
           title: `${selectedCourse.length} Courses Updated`,
           description: "Redirecting to home page",
         });
       }
-      toaster.success({
-        title: `${selectedCourse.length} Successfully Registered`,
-        description: "Redirecting to home page",
-      });
       router.replace("/", { scroll: true });
     });
   };
@@ -80,75 +82,29 @@ export default function StudentRegisterCourse() {
         choose as many as you like it’s your semester, your way!
       </Text>
 
-      {isLoading && (
-        <Box p={6}>
-          <Spinner />
-        </Box>
-      )}
+      <Box mt="5" hidden={courses.length < 1}>
+        <LevelFilter value={level} onSelect={onSelect} />
+        <Separator my={4} />
 
-      {!isLoading && !error && (
-        <>
-          {courses.length > 0 && (
-            <CheckboxGroup
-              value={selectedCourse}
-              onValueChange={(detail) => setSelectedCourse(detail)}
-            >
-              <SimpleGrid columns={[1, null, 3]} gap={4} mt={10}>
-                {courses.map((course) => {
-                  return (
-                    <GridItem key={course.id} asChild>
-                      <CheckboxCard.Root
-                        cursor={"pointer"}
-                        _hover={{ bg: "bg.subtle" }}
-                        rounded={"xl"}
-                        colorPalette={"orange"}
-                        value={course.id}
-                      >
-                        <CheckboxCard.HiddenInput />
-                        <CheckboxCard.Control>
-                          <CheckboxCard.Content>
-                            {/* <Card.Root size="sm" cursor={"pointer"}> */}
-                            {/* <Card.Body> */}
-                            <CheckboxCard.Label fontSize={"lg"}>
-                              {course.code}
-                            </CheckboxCard.Label>
-                            <Text mt={1}>{course.title}</Text>
-                            <Text mt={2} fontSize={"sm"}>
-                              Unit: {course.creditUnit}
-                            </Text>
-                            <HStack flexWrap={"wrap"} mt={2}>
-                              {course.departmentId.map((code) => {
-                                return (
-                                  <Badge
-                                    rounded="full"
-                                    colorPalette={"gray"}
-                                    variant={"outline"}
-                                    key={code}
-                                  >
-                                    {code}
-                                  </Badge>
-                                );
-                              })}
-                            </HStack>
-                            <CheckboxCard.Description mt="2">
-                              {course.description}
-                            </CheckboxCard.Description>
-                            {/* </Card.Body> */}
-                            {/* </Card.Root> */}
-                          </CheckboxCard.Content>
-                          <CheckboxCard.Indicator rounded={"full"} />
-                        </CheckboxCard.Control>
-                      </CheckboxCard.Root>
-                    </GridItem>
-                  );
-                })}
-              </SimpleGrid>
-            </CheckboxGroup>
-          )}
-
-          {courses.length < 1 && <EmptyCourseState />}
-        </>
-      )}
+        <HStack mb={10} mt={5} justifyContent={"space-between"}>
+          <Text fontSize={"lg"}>
+            <Span color="fg.muted">{selectedCourse.length}</Span>/
+            {courses.length} Selected
+          </Text>
+          <Button
+            onClick={regCourse}
+            disabled={selectedCourse.length < 1}
+            loading={isRegingCourse}
+            loadingText="Registering"
+            colorPalette={"orange"}
+            rounded="full"
+            px="8"
+            py={6}
+          >
+            Register Selected
+          </Button>
+        </HStack>
+      </Box>
 
       {regCourseErr && (
         <Alert.Root maxW={"md"} status={"error"} mt={10} mb={2}>
@@ -160,29 +116,62 @@ export default function StudentRegisterCourse() {
         </Alert.Root>
       )}
 
-      <HStack
-        mb={10}
-        mt={!regCourseErr ? 10 : 1}
-        hidden={courses.length < 1}
-        justifyContent={"space-between"}
-      >
-        <Text fontSize={"lg"}>
-          <Span color="fg.muted">{selectedCourse.length}</Span>/{courses.length}{" "}
-          Selected
-        </Text>
-        <Button
-          onClick={regCourse}
-          disabled={selectedCourse.length < 1}
-          loading={isRegingCourse}
-          loadingText="Registering"
-          colorPalette={"orange"}
-          rounded="full"
-          px="8"
-          py={6}
-        >
-          Register Selected
-        </Button>
-      </HStack>
+      {isLoading && (
+        <Box p={6}>
+          <Spinner />
+        </Box>
+      )}
+
+      {!isLoading && !error && (
+        <>
+          {filteredCourses.length > 0 && (
+            <CheckboxGroup
+              value={selectedCourse}
+              onValueChange={(detail) => setSelectedCourse(detail)}
+            >
+              {Array.from(groupedCourses.keys()).map((semester) => (
+                <Box key={semester} mb={8}>
+                  <Heading size="md" mb={4} textTransform={"capitalize"}>
+                    {semester} Semester
+                  </Heading>
+                  <SimpleGrid columns={[1, null, 3]} gap={4}>
+                    {filteredCourses.map((course) => {
+                      return (
+                        <GridItem key={course.id} asChild>
+                          <CheckboxCard.Root
+                            cursor={"pointer"}
+                            _hover={{ bg: "bg.subtle" }}
+                            rounded={"xl"}
+                            colorPalette={"orange"}
+                            value={course.id}
+                          >
+                            <CheckboxCard.HiddenInput />
+                            <CheckboxCard.Control p="0" m="0" gap="0">
+                              <CheckboxCard.Content asChild m="0">
+                                {/* <Card.Root size="sm" cursor={"pointer"}> */}
+                                {/* <Card.Body> */}
+                                <CourseItem course={course} bg="transparent" />
+                                {/* </Card.Body> */}
+                                {/* </Card.Root> */}
+                              </CheckboxCard.Content>
+                              <CheckboxCard.Indicator
+                                rounded={"full"}
+                                m="1.5"
+                              />
+                            </CheckboxCard.Control>
+                          </CheckboxCard.Root>
+                        </GridItem>
+                      );
+                    })}
+                  </SimpleGrid>
+                </Box>
+              ))}
+            </CheckboxGroup>
+          )}
+
+          {courses.length < 1 && <EmptyCourseState />}
+        </>
+      )}
     </>
   );
 }

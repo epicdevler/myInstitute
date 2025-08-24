@@ -1,8 +1,8 @@
+import { useLoadDepartments } from "@/app/(app)/dashboard/tabs/departments/useLoadDepartments";
 import { Field } from "@/app/components/ui/field";
 import { toaster } from "@/app/components/ui/toaster";
-import { useLoadDepartments } from "@/app/(app)/dashboard/tabs/departments/useLoadDepartments";
-import { Course } from "@/lib/models/Course";
-import { PouchCourseRepository } from "@/lib/repositories/PouchCourseRepo";
+import { Course, LevelList, SemesterList } from "@/lib/models/Course";
+import { CourseRepository } from "@/lib/repositories/remote/CourseRepo";
 import {
   Alert,
   Button,
@@ -14,6 +14,7 @@ import {
   Input,
   InputGroup,
   Portal,
+  RadioCard,
   Select,
   Span,
   Spinner,
@@ -29,7 +30,10 @@ import {
 } from "react";
 
 type CourseFields = Omit<Course, "id" | "createdAt">;
-type CourseFieldErrors = Partial<CourseFields> & { submitError?: string };
+type CourseFieldErrors = Partial<
+  Record<keyof CourseFields | "submitError", string>
+>;
+
 export default function CourseDialog({
   open,
   onClose,
@@ -39,50 +43,26 @@ export default function CourseDialog({
 }) {
   const [isSubmitting, submitTransition] = useTransition();
 
-  const [values, setValues] = useState<CourseFields>({
-    title: "",
-    code: "",
-    creditUnit: "",
-    description: "",
-    departmentId: [],
+  const { isLoading, loadingError, departments } = useLoadDepartments();
+
+  const collection = useMemo(() => {
+    return createListCollection({
+      items: departments,
+      itemToString: (department) => department.code,
+      itemToValue: (department) => department.id,
+    });
+  }, [departments]);
+
+  const [values, setValues] = useState<Partial<CourseFields>>({
+    code: undefined,
+    creditUnit: undefined,
+    departmentId: undefined,
+    description: undefined,
+    level: undefined,
+    semester: undefined,
+    title: undefined,
   });
   const [errors, setErrors] = useState<CourseFieldErrors>({});
-
-  const handleSubmit = (event: FormEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setErrors((prev) => ({ ...prev, submitError: undefined }));
-    submitTransition(async () => {
-      if (fieldHasErrors()) {
-        return;
-      }
-
-      const response = await new PouchCourseRepository().add(values);
-
-      if (!response.success) {
-        setErrors((prev) => ({ ...prev, submitError: response.message }));
-        return;
-      }
-
-      onClose(true);
-      toaster.success({ description: "Courses added." });
-    });
-  };
-
-  function fieldHasErrors(): boolean {
-    const objectValues = Object.entries(values);
-    let foundError = false;
-
-    objectValues.forEach(([key, value]) => {
-      if (value.length < 1) {
-        setErrors((prevErrors) => ({ ...prevErrors, [key]: "Required" }));
-        foundError = true;
-      } else {
-        setErrors((prevErrors) => ({ ...prevErrors, [key]: undefined }));
-      }
-    });
-
-    return foundError;
-  }
 
   const handleInputChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -97,15 +77,43 @@ export default function CourseDialog({
     }));
   };
 
-  const { isLoading, loadingError, departments } = useLoadDepartments();
+  function validateFields(fields: Partial<CourseFields>): CourseFieldErrors {
+    const newErrors: CourseFieldErrors = {};
 
-  const collection = useMemo(() => {
-    return createListCollection({
-      items: departments,
-      itemToString: (department) => department.code,
-      itemToValue: (department) => department.id,
+    for (const [key, value] of Object.entries(fields)) {
+      if (!value || (typeof value === "string" && value.trim().length === 0)) {
+        newErrors[key as keyof CourseFieldErrors] = "This field is required";
+      }
+    }
+
+    return newErrors;
+  }
+
+  function fieldHasErrors(): boolean {
+    const validationErrors = validateFields(values);
+    setErrors(validationErrors);
+    return Object.keys(validationErrors).length > 0;
+  }
+
+  const handleSubmit = (event: FormEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setErrors((prev) => ({ ...prev, submitError: undefined }));
+    submitTransition(async () => {
+      if (fieldHasErrors()) {
+        return;
+      }
+
+      const response = await new CourseRepository().add(values as CourseFields);
+
+      if (!response.success) {
+        setErrors((prev) => ({ ...prev, submitError: response.message }));
+        return;
+      }
+
+      onClose(true);
+      toaster.success({ description: "Courses added." });
     });
-  }, [departments]);
+  };
 
   return (
     <Dialog.Root
@@ -118,6 +126,7 @@ export default function CourseDialog({
       scrollBehavior={"inside"}
       motionPreset="slide-in-bottom"
       unmountOnExit
+      lazyMount
     >
       <Dialog.Backdrop />
       <Portal>
@@ -126,14 +135,7 @@ export default function CourseDialog({
             <Dialog.Header>
               <Heading>Add Course</Heading>
             </Dialog.Header>
-            <Dialog.Body>
-              <Alert.Root hidden={!errors.submitError} status={"error"} mb={5}>
-                <Alert.Indicator />
-                <Alert.Content>
-                  <Alert.Title>Login Failed</Alert.Title>
-                  <Alert.Description>{errors.submitError}</Alert.Description>
-                </Alert.Content>
-              </Alert.Root>
+            <Dialog.Body gap={4}>
               <Field
                 label="Course Title"
                 invalid={errors.title != undefined}
@@ -197,14 +199,17 @@ export default function CourseDialog({
                   endElement={isLoading ? <Spinner /> : undefined}
                 >
                   <Select.Root
-                    rounded={"full"}
                     value={values.departmentId}
                     collection={collection}
-                    size="sm"
+                    // size="sm"
                     multiple
                     disabled={isLoading}
-                    positioning={{ strategy: "fixed", hideWhenDetached: true }}
+                    positioning={{ sameWidth: true, hideWhenDetached: true }}
                     onValueChange={(detail) => {
+                      setErrors((prevErrors) => ({
+                        ...prevErrors,
+                        departmentId: undefined,
+                      }));
                       setValues((prev) => ({
                         ...prev,
                         departmentId: detail.value,
@@ -212,7 +217,7 @@ export default function CourseDialog({
                     }}
                   >
                     <Select.HiddenSelect />
-                    <Select.Control rounded="full">
+                    <Select.Control>
                       <Select.Trigger rounded="full">
                         <Select.ValueText placeholder="Select Deparment" />
                       </Select.Trigger>
@@ -240,6 +245,89 @@ export default function CourseDialog({
                 </InputGroup>
               </Field>
 
+              <HStack gap={4}>
+                <Field
+                  label="Level"
+                  mt="4"
+                  invalid={errors.level != undefined}
+                  errorText={errors.level}
+                >
+                  <RadioCard.Root
+                    value={values.level || undefined}
+                    onValueChange={(detail) => {
+                      setErrors((prevErrors) => ({
+                        ...prevErrors,
+                        ["level"]: undefined,
+                      }));
+                      setValues((prevValues) => ({
+                        ...prevValues,
+                        level:
+                          (detail?.value as CourseFields["level"]) || undefined,
+                      }));
+                    }}
+                    size={"sm"}
+                    w="full"
+                  >
+                    <HStack align="stretch">
+                      {LevelList.map((level) => (
+                        <RadioCard.Item
+                          key={level}
+                          value={level.replace(" ", "-")}
+                          flex={1}
+                          w={"full"}
+                        >
+                          <RadioCard.ItemHiddenInput />
+                          <RadioCard.ItemControl>
+                            <RadioCard.ItemText>{level}</RadioCard.ItemText>
+                            <RadioCard.ItemIndicator />
+                          </RadioCard.ItemControl>
+                        </RadioCard.Item>
+                      ))}
+                    </HStack>
+                  </RadioCard.Root>
+                </Field>
+
+                <Field
+                  label="Semester"
+                  mt="4"
+                  invalid={errors.semester != undefined}
+                  errorText={errors.semester}
+                >
+                  <RadioCard.Root
+                    value={values.semester || undefined}
+                    w="full"
+                    size="sm"
+                    onValueChange={(detail) => {
+                      setErrors((prevErrors) => ({
+                        ...prevErrors,
+                        ["semester"]: undefined,
+                      }));
+                      setValues((prevValues) => ({
+                        ...prevValues,
+                        semester:
+                          (detail?.value as CourseFields["semester"]) ||
+                          undefined,
+                      }));
+                    }}
+                  >
+                    <HStack align="stretch">
+                      {SemesterList.map((semester) => (
+                        <RadioCard.Item
+                          key={semester}
+                          value={semester.toLocaleLowerCase()}
+                        >
+                          <RadioCard.ItemHiddenInput />
+                          <RadioCard.ItemControl>
+                            <RadioCard.ItemText>{semester}</RadioCard.ItemText>
+                            <RadioCard.ItemIndicator />
+                          </RadioCard.ItemControl>
+                        </RadioCard.Item>
+                      ))}
+                    </HStack>
+                  </RadioCard.Root>
+                </Field>
+              </HStack>
+
               <Field
                 mt="4"
                 flex={"full"}
@@ -262,6 +350,14 @@ export default function CourseDialog({
                   onChange={handleInputChange}
                 />
               </Field>
+
+              <Alert.Root hidden={!errors.submitError} status={"error"} mt={5}>
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Title>Login Failed</Alert.Title>
+                  <Alert.Description>{errors.submitError}</Alert.Description>
+                </Alert.Content>
+              </Alert.Root>
             </Dialog.Body>
             <Dialog.Footer mt={10}>
               <Dialog.ActionTrigger disabled={isSubmitting} asChild>

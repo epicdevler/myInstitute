@@ -2,7 +2,7 @@
 import { ErrorState } from "@/app/components/ErrorState";
 import { toaster } from "@/app/components/ui/toaster";
 import { Department } from "@/lib/models/Department";
-import { PouchDepartmentRepository } from "@/lib/repositories/PouchDepartmentRepo";
+import { DepartmentRepository } from "@/lib/repositories/remote/DepartmentRepo";
 import {
   Box,
   Button,
@@ -20,9 +20,9 @@ import {
 } from "@chakra-ui/react";
 import { MoreVerticalIcon, PlusIcon } from "lucide-react";
 import { useCallback, useState, useTransition } from "react";
-import { useLoadDepartments } from "./useLoadDepartments";
 import EmptyState from "../../EmptyState";
 import DepartmentDialog from "./dialog/Dialog";
+import { useLoadDepartments } from "./useLoadDepartments";
 
 export default function DepartmentsTab() {
   const { isLoading, loadingError, departments, retry } = useLoadDepartments();
@@ -32,7 +32,10 @@ export default function DepartmentsTab() {
   const toggleOpenAddDialog = useCallback(
     (success?: boolean) => {
       setOpenAddDialog((prev) => !prev);
-      if (success == true) retry();
+      if (success == true) {
+        retry();
+        toaster.success({ description: "Department added." });
+      }
     },
     [retry]
   );
@@ -104,9 +107,7 @@ function DepartmentItem({
 
   const onDelete = () => {
     startDeleting(async () => {
-      const response = await new PouchDepartmentRepository().delete(
-        department.id
-      );
+      const response = await new DepartmentRepository().delete(department.id);
 
       if (response.success) {
         onSuccess();

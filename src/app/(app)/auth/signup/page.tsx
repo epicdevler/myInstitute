@@ -1,9 +1,9 @@
 "use client";
+import { useLoadDepartments } from "@/app/(app)/dashboard/tabs/departments/useLoadDepartments";
 import { Field } from "@/app/components/ui/field";
 import { PasswordInput } from "@/app/components/ui/password-input";
 import { toaster } from "@/app/components/ui/toaster";
-import { useLoadDepartments } from "@/app/(app)/dashboard/tabs/departments/useLoadDepartments";
-import { PouchUserRepository } from "@/lib/repositories/PouchUserRepo";
+import { UserRepository } from "@/lib/repositories/remote/UserRepo";
 import {
   Alert,
   Button,
@@ -23,9 +23,9 @@ import { useRouter } from "nextjs-toploader/app";
 import {
   ChangeEvent,
   FormEvent,
+  useMemo,
   useState,
   useTransition,
-  useMemo,
 } from "react";
 import { commonProps } from "./commonProps";
 
@@ -69,7 +69,7 @@ export default function Page() {
         return;
       }
 
-      const userResponse = await new PouchUserRepository().signup({
+      const userResponse = await new UserRepository().signup({
         firstName: values.firstName,
         lastName: values.lastName,
         departmentId: values.departmentId,

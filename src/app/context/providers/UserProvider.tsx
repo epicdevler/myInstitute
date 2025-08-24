@@ -1,43 +1,66 @@
 "use client";
-import { PouchUserRepository } from "@/lib/repositories/PouchUserRepo";
+import { firebaseAuth } from "@/lib/repositories/remote/config";
+import { UserRepository } from "@/lib/repositories/remote/UserRepo";
 import { Center, Spinner } from "@chakra-ui/react";
+import { onAuthStateChanged } from "firebase/auth";
 import { ReactNode, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
 import { UserContextUser } from "../UserContextType";
 import { UserErrorState } from "./UserErrorState";
-import { UsersDB } from "@/lib/pouchdbConfig";
 
 export default function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserContextUser>();
+  // const [tempUser, setTempUser] = useState<UserContextUser>();
   const [userLoadingError, setUserLoadError] = useState<string>();
   const [isUserLoading, setUserLoading] = useState(true);
   const [retry, setRetry] = useState(0);
 
   useEffect(() => {
-    
     if (user && retry == 0) return;
 
     const unsub = async () => {
-      const userResponse = await new PouchUserRepository().getProfile();
+      setUserLoading(true);
+      return onAuthStateChanged(
+        firebaseAuth,
+        async (user) => {
+          if (user) {
+            return await new UserRepository().getProfileObserve(
+              user.uid,
+              (userResponse) => {
+                if (!userResponse.success) {
+                  setUserLoadError(userResponse.message);
+                  setUserLoading(false);
+                  return;
+                }
+                setUser(userResponse.data as UserContextUser);
+                setUserLoading(false);
+                setRetry(0);
+              }
+            );
+          }
+        },
+        /* onError = */ (error) => {
+          setUserLoadError(error.message);
+          setUserLoading(false);
+        }
+      );
 
-      if (!userResponse.success) {
-        setUserLoadError(userResponse.message);
-        setUserLoading(false);
-        return;
-      }
+      // return;
+      // const userResponse = await new UserRepository().getProfile();
 
-      setUser(userResponse.data as UserContextUser);
-      setUserLoading(false);
-      setRetry(0)
+      // if (!userResponse.success) {
+      //   setUserLoadError(userResponse.message);
+      //   setUserLoading(false);
+      //   return;
+      // }
+
+      // setUser(userResponse.data as UserContextUser);
+      // setUserLoading(false);
+      // setRetry(0);
     };
 
     unsub();
   }, [user, retry]);
-
-
-  useEffect(() => {
-    UsersDB.viewCleanup()
-  })
 
   return (
     <UserContext.Provider

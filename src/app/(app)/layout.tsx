@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Toaster } from "@/app/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -10,5 +11,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <section>{children}</section>;
+  return (
+    <section>
+      {children}
+
+      <Toaster />
+    </section>
+  );
 }

@@ -16,7 +16,7 @@ import { ChangeEvent, FormEvent, useState, useTransition } from "react";
 import { commonProps } from "../signup/commonProps";
 
 import { toaster } from "@/app/components/ui/toaster";
-import { PouchUserRepository } from "@/lib/repositories/PouchUserRepo";
+import { UserRepository } from "@/lib/repositories/remote/UserRepo";
 import { useRouter } from "nextjs-toploader/app";
 
 type LoginFields = { email: string; password: string };
@@ -76,7 +76,7 @@ export default function Page() {
         return;
       }
 
-      const userResponse = await new PouchUserRepository().login(
+      const userResponse = await new UserRepository().login(
         values.email,
         values.password
       );

@@ -50,7 +50,13 @@ export default function Home() {
         /> */}
       </SimpleGrid>
 
-      <Tabs.Root lazyMount w='full' variant={'outline'} my={20} defaultValue="departments">
+      <Tabs.Root
+        lazyMount
+        w="full"
+        variant={"outline"}
+        my={20}
+        defaultValue="departments"
+      >
         <Tabs.List>
           <Tabs.Trigger value="departments">
             <LuUser />
@@ -60,7 +66,7 @@ export default function Home() {
             <LuFolder />
             Courses
           </Tabs.Trigger>
-          <Tabs.Trigger hidden value="students">
+          <Tabs.Trigger value="students">
             <LuSquareCheck />
             Students
           </Tabs.Trigger>

@@ -1,10 +1,11 @@
 import { toaster } from "@/app/components/ui/toaster";
 import { Course } from "@/lib/models/Course";
-import { PouchCourseRepository } from "@/lib/repositories/PouchCourseRepo";
+import { CourseRepository } from "@/lib/repositories/remote/CourseRepo";
 import {
   Badge,
   Button,
   Card,
+  CardRootProps,
   Float,
   HStack,
   IconButton,
@@ -17,24 +18,20 @@ import {
 import { MoreVerticalIcon } from "lucide-react";
 import { useTransition } from "react";
 
-export function CourseItem({
-  course,
-  admin,
-  onMenuSelected,
-  onClick,
-  onSuccess,
-}: {
+type CourseItemProps = Omit<CardRootProps, "children"> & {
   course: Course;
   admin?: boolean;
   onMenuSelected?: (selected: string) => void;
   onClick?: () => void;
   onSuccess?: () => void;
-}) {
+};
+export function CourseItem(props: CourseItemProps) {
+  const { course, admin, onMenuSelected, onClick, onSuccess, ...rest } = props;
   const [, /* isDeleting */ startDeleting] = useTransition();
 
   const onDelete = () => {
     startDeleting(async () => {
-      const response = await new PouchCourseRepository().delete(course.id);
+      const response = await new CourseRepository().delete(course.id);
 
       if (response.success) {
         if (onSuccess) {
@@ -49,7 +46,7 @@ export function CourseItem({
       }
     });
   };
-  
+
   return (
     <Card.Root
       pos="relative"
@@ -58,34 +55,17 @@ export function CourseItem({
       rounded={"xl"}
       size="sm"
       colorPalette={"orange"}
+      variant={"subtle"}
+      w="full"
+      {...rest}
     >
-      <Card.Header>
-        <Card.Title>{course.code}</Card.Title>
-      </Card.Header>
       <Card.Body>
         {/* <Card.Root size="sm" cursor={"pointer"}> */}
         {/* <Card.Body> */}
-        <Text mt={1} fontSize={"sm"} lineClamp={3}>
+        <Card.Title>{course.code}</Card.Title>
+        <Text fontSize={"sm"} lineClamp={3}>
           {course.title}
         </Text>
-        <Text mt={2} fontSize={"sm"}>
-          Unit: {course.creditUnit}
-        </Text>
-
-        <HStack flexWrap={"wrap"} mt={2}>
-          {course.departmentId.map((code) => {
-            return (
-              <Badge
-                rounded="full"
-                colorPalette={"gray"}
-                variant={"outline"}
-                key={code}
-              >
-                {code}
-              </Badge>
-            );
-          })}
-        </HStack>
 
         {/* </Card.Body> */}
         {/* </Card.Root> */}
@@ -100,7 +80,6 @@ export function CourseItem({
               color="fg.muted"
               variant={"plain"}
               px="0"
-              mt={4}
             >
               See Detail
             </Button>
@@ -111,11 +90,40 @@ export function CourseItem({
                 <Popover.Arrow />
                 <Popover.Header>
                   <Popover.Title fontSize={"lg"} fontWeight={"semibold"}>
-                    Brief About
+                    Course Details
                   </Popover.Title>
                 </Popover.Header>
-                <Popover.Body>
-                  <Popover.Description>
+                <Popover.Body overflowY={"auto"}>
+                  <Text fontSize={"sm"}>
+                    Level {course.level.replace("-", " ")}
+                  </Text>
+                  <Text fontSize={"sm"} textTransform={"capitalize"}>
+                    Semester {course.semester}
+                  </Text>
+                  <Text fontSize={"sm"}>Course Unit {course.creditUnit}</Text>
+
+                  <Text mt={4} fontSize={"sm"} color="fg.muted">
+                    Departments
+                  </Text>
+                  <HStack flexWrap={"wrap"} py={2}>
+                    {course.departmentId.map((code) => {
+                      return (
+                        <Badge
+                          rounded="full"
+                          colorPalette={"gray"}
+                          variant={"outline"}
+                          key={code}
+                        >
+                          {code}
+                        </Badge>
+                      );
+                    })}
+                  </HStack>
+
+                  <Text mt={4} mb={1} fontSize={"sm"} color="fg.muted">
+                    Description
+                  </Text>
+                  <Popover.Description fontSize={"sm"}>
                     {course.description}
                   </Popover.Description>
                 </Popover.Body>

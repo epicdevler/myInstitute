@@ -6,6 +6,7 @@ import {
   GridItem,
   Heading,
   HStack,
+  Separator,
   SimpleGrid,
   Spinner,
   Text,
@@ -17,6 +18,9 @@ import { CourseItem } from "./CourseItem";
 import { EmptyCourseState } from "./EmptyCourseState";
 import { useLoadCourses } from "../../../hooks/useLoadCourses";
 import { ErrorState } from "@/app/components/ErrorState";
+import { LevelFilter } from "../../../components/LevelFilter";
+import { useLevelFilter } from "../../../hooks/useLevelFilter";
+import useGroupCourse from "@/app/hooks/useGroupCourse";
 
 export default function StudentHomePage() {
   const { user } = use(UserContext);
@@ -25,7 +29,8 @@ export default function StudentHomePage() {
     enabled: true,
     courseId: user?.registeredCourses,
   });
-
+  const { filteredCourses, level, onSelect } = useLevelFilter(courses);
+  const groupedCourses = useGroupCourse(filteredCourses);
 
   return (
     <>
@@ -36,12 +41,7 @@ export default function StudentHomePage() {
         Petroleom Training Institute, {user?.departmentId}
       </Text>
 
-      <HStack
-        justify={"space-between"}
-        my={10}
-        py={4}
-        borderBottomWidth={"thin"}
-      >
+      <HStack justify={"space-between"} my={4} py={2}>
         <Text fontWeight={"semibold"}>Your Registered Courses</Text>
         <Button
           hidden={courses.length < 1}
@@ -55,6 +55,8 @@ export default function StudentHomePage() {
         </Button>
       </HStack>
 
+      <LevelFilter onSelect={onSelect} value={level} />
+
       {isLoading && (
         <Box p={6}>
           <Spinner />
@@ -67,19 +69,29 @@ export default function StudentHomePage() {
 
       {!isLoading && !error && (
         <>
-          {courses.length > 0 && (
-            <SimpleGrid columns={[1, null, 3]} gap={[2, null, 4]} mb={20}>
-              {courses.map((course) => {
-                return (
-                  <GridItem key={course.id} asChild>
-                    <CourseItem course={course} />
-                  </GridItem>
-                );
-              })}
-            </SimpleGrid>
+          {filteredCourses.length > 0 && (
+            <Box>
+              <Separator my={4} />
+              {Array.from(groupedCourses.keys()).map((semester) => (
+                <Box key={semester} mb={8}>
+                  <Heading size="md" mb={4} textTransform={"capitalize"}>
+                    {semester} Semester
+                  </Heading>
+                  <SimpleGrid columns={[1, null, 3]} gap={[2, null, 4]} mb={20}>
+                    {groupedCourses.get(semester)?.map((course) => {
+                      return (
+                        <GridItem key={course.id} asChild>
+                          <CourseItem course={course} />
+                        </GridItem>
+                      );
+                    })}
+                  </SimpleGrid>
+                </Box>
+              ))}
+            </Box>
           )}
 
-          {courses.length < 1 && <EmptyCourseState />}
+          {filteredCourses.length < 1 && <EmptyCourseState />}
         </>
       )}
 

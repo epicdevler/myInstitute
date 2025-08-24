@@ -1,8 +1,7 @@
 "use client";
 import { Department } from "@/lib/models/Department";
-import { PouchDepartmentRepository } from "@/lib/repositories/PouchDepartmentRepo";
-import { useState, useEffect } from "react";
-
+import { DepartmentRepository } from "@/lib/repositories/remote/DepartmentRepo";
+import { useEffect, useState } from "react";
 
 export function useLoadDepartments() {
   const [isLoading, setIsLoading] = useState(true);
@@ -14,7 +13,7 @@ export function useLoadDepartments() {
     const invoke = async () => {
       setLoadingError(undefined);
 
-      const response = await new PouchDepartmentRepository().getAll();
+      const response = await new DepartmentRepository().getAll();
 
       if (!response.success) {
         setLoadingError(response.message);

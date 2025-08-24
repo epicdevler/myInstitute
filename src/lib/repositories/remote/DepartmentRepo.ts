@@ -7,9 +7,9 @@ import {
   runTransaction,
   serverTimestamp,
 } from "firebase/firestore";
-import { firestoreDB } from "../config";
-import { Department } from "../models/Department";
-import { DBResponse } from "./UserRepo";
+import { firestoreDB } from "./config";
+import { Department } from "../../models/Department";
+import { DBResponse } from "@/lib/utils/DBResponse";
 
 export class DepartmentRepository {
   departmentColleciton = collection(firestoreDB, "departments");
@@ -17,37 +17,41 @@ export class DepartmentRepository {
   async add(
     department: Omit<Department, "id" | "createdAt">
   ): Promise<DBResponse<undefined>> {
-    return await runTransaction(firestoreDB, async (transaction) => {
-      try {
-        console.log("INSERTING Department");
-        const departmentDoc = doc(
-          this.departmentColleciton,
-          department.code.replaceAll(" ", "-")
-        );
-        console.log("INSERTING Department 1");
+    return await runTransaction(
+      firestoreDB,
+      async (transaction) => {
+        try {
+          console.log("INSERTING Department");
+          const departmentDoc = doc(
+            this.departmentColleciton,
+            department.code.replaceAll(" ", "-")
+          );
+          console.log("INSERTING Department 1");
 
-        const check = await transaction.get(departmentDoc)
-        const existing = check.exists();
-        console.log("INSERTING Department 2");
+          const check = await transaction.get(departmentDoc);
+          const existing = check.exists();
+          console.log("INSERTING Department 2");
 
-        if (existing)
-          throw new Error(`Department with ${department.code} already exist`);
+          if (existing)
+            throw new Error(`Department with ${department.code} already exist`);
 
-        console.log("INSERTING Department 3");
-        transaction.set(departmentDoc, {
-          ...department,
-          createdAt: serverTimestamp(),
-        });
-        return {
-          success: true,
-        };
-      } catch (error) {
-        return {
-          success: false,
-          message: (error as Error).message,
-        };
-      }
-    }, {maxAttempts:1});
+          console.log("INSERTING Department 3");
+          transaction.set(departmentDoc, {
+            ...department,
+            createdAt: serverTimestamp(),
+          });
+          return {
+            success: true,
+          };
+        } catch (error) {
+          return {
+            success: false,
+            message: (error as Error).message,
+          };
+        }
+      },
+      { maxAttempts: 1 }
+    );
   }
 
   async getAll(): Promise<DBResponse<Department[]>> {
