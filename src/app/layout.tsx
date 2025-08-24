@@ -2,6 +2,7 @@
 import { Provider } from "@/app/components/ui/provider";
 import "./globals.css";
 import NextTopLoader from 'nextjs-toploader'
+import { Analytics } from "@vercel/analytics/next"
 
 export default function RootLayout({
   children,
@@ -16,6 +17,7 @@ export default function RootLayout({
       <body >
         <Provider storageKey="myInstitute">{children}</Provider>
         <NextTopLoader color="orange" />
+        <Analytics />
       </body>
     </html>
   );
