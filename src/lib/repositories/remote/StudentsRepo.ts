@@ -27,7 +27,7 @@ export const StudentRepository = {
     } catch (error) {
       return {
         success: false,
-        message: handleAuthError(error as Error),
+        message: handleAuthError(error),
       };
     }
   },

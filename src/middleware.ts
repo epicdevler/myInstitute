@@ -10,7 +10,6 @@ export async function middleware(req: NextRequest) {
 
   const pathname = req.nextUrl.pathname;
 
-
   // Redirect if not logged in
   if (
     !cookieData &&

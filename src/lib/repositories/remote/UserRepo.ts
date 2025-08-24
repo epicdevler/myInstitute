@@ -54,7 +54,7 @@ export class UserRepository {
       await this.logout();
       return {
         success: false,
-        message: handleAuthError(error as Error),
+        message: handleAuthError(error),
       };
     }
   }
@@ -83,7 +83,7 @@ export class UserRepository {
       await this.logout();
       return {
         success: false,
-        message: handleAuthError(error as Error),
+        message: handleAuthError(error),
       };
     }
   }
@@ -98,7 +98,7 @@ export class UserRepository {
     } catch (error) {
       return {
         success: false,
-        message: handleAuthError(error as Error),
+        message: handleAuthError(error),
       };
     }
   }
@@ -201,7 +201,7 @@ export class UserRepository {
       } catch (error) {
         return {
           success: false,
-          message: handleAuthError(error as Error),
+          message: handleAuthError(error),
         };
       }
     });

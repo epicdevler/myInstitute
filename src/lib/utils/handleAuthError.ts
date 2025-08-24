@@ -1,5 +1,7 @@
-export function handleAuthError(error: Error): string {
+import { handleAppError } from "./firebaseErrorHandler";
+
+export function handleAuthError(error: unknown): string {
   console.log("Error: ", error);
 
-  return (error as Error).message;
+  return handleAppError(error);
 }

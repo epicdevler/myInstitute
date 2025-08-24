@@ -11,6 +11,7 @@ import {
 import { firestoreDB } from "./config";
 import { Course } from "../../models/Course";
 import { DBResponse } from "@/lib/utils/DBResponse";
+import { handleAuthError } from "@/lib/utils/handleAuthError";
 
 export class CourseRepository {
   courseCollection = collection(firestoreDB, "courses");
@@ -39,7 +40,7 @@ export class CourseRepository {
       } catch (error) {
         return {
           success: false,
-          message: (error as Error).message,
+          message: handleAuthError(error),
         };
       }
     });
@@ -64,7 +65,7 @@ export class CourseRepository {
     } catch (error) {
       return {
         success: false,
-        message: (error as Error).message,
+        message: handleAuthError(error),
       };
     }
   }
@@ -93,7 +94,7 @@ export class CourseRepository {
     } catch (error) {
       return {
         success: false,
-        message: (error as Error).message,
+        message: handleAuthError(error),
       };
     }
   }
@@ -126,7 +127,7 @@ export class CourseRepository {
     } catch (error) {
       return {
         success: false,
-        message: (error as Error).message,
+        message: handleAuthError(error),
       };
     }
   }
@@ -153,7 +154,7 @@ export class CourseRepository {
       } catch (error) {
         return {
           success: false,
-          message: (error as Error).message,
+          message: handleAuthError(error),
         };
       }
     });
@@ -177,7 +178,7 @@ export class CourseRepository {
       } catch (error) {
         return {
           success: false,
-          message: (error as Error).message,
+          message: handleAuthError(error),
         };
       }
     });

@@ -10,6 +10,7 @@ import {
 import { firestoreDB } from "./config";
 import { Department } from "../../models/Department";
 import { DBResponse } from "@/lib/utils/DBResponse";
+import { handleAuthError } from "@/lib/utils/handleAuthError";
 
 export class DepartmentRepository {
   departmentColleciton = collection(firestoreDB, "departments");
@@ -21,21 +22,17 @@ export class DepartmentRepository {
       firestoreDB,
       async (transaction) => {
         try {
-          console.log("INSERTING Department");
           const departmentDoc = doc(
             this.departmentColleciton,
             department.code.replaceAll(" ", "-")
           );
-          console.log("INSERTING Department 1");
 
           const check = await transaction.get(departmentDoc);
           const existing = check.exists();
-          console.log("INSERTING Department 2");
 
           if (existing)
             throw new Error(`Department with ${department.code} already exist`);
 
-          console.log("INSERTING Department 3");
           transaction.set(departmentDoc, {
             ...department,
             createdAt: serverTimestamp(),
@@ -46,7 +43,7 @@ export class DepartmentRepository {
         } catch (error) {
           return {
             success: false,
-            message: (error as Error).message,
+            message: handleAuthError(error),
           };
         }
       },
@@ -75,7 +72,7 @@ export class DepartmentRepository {
     } catch (error) {
       return {
         success: false,
-        message: (error as Error).message,
+        message: handleAuthError(error),
       };
     }
   }
@@ -101,7 +98,7 @@ export class DepartmentRepository {
     } catch (error) {
       return {
         success: false,
-        message: (error as Error).message,
+        message: handleAuthError(error),
       };
     }
   }
@@ -126,7 +123,7 @@ export class DepartmentRepository {
     } catch (error) {
       return {
         success: false,
-        message: (error as Error).message,
+        message: handleAuthError(error),
       };
     }
   }
@@ -153,7 +150,7 @@ export class DepartmentRepository {
       } catch (error) {
         return {
           success: false,
-          message: (error as Error).message,
+          message: handleAuthError(error),
         };
       }
     });
@@ -177,7 +174,7 @@ export class DepartmentRepository {
       } catch (error) {
         return {
           success: false,
-          message: (error as Error).message,
+          message: handleAuthError(error),
         };
       }
     });
