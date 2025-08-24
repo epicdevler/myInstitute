@@ -11,7 +11,7 @@ import {
 import { BookIcon, LayoutGridIcon, Users2Icon } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { LuFolder, LuSquareCheck, LuUser } from "react-icons/lu";
+import { LuFolder, LuNotebookPen, LuUser } from "react-icons/lu";
 import CoursesTab from "./tabs/coures/CoursesTab";
 import DepartmentsTab from "./tabs/departments/DepartmentsTab";
 import StudentsTab from "./tabs/students/StudentsTab";
@@ -59,15 +59,15 @@ export default function Home() {
       >
         <Tabs.List>
           <Tabs.Trigger value="departments">
-            <LuUser />
+            <LuFolder />
             Departments
           </Tabs.Trigger>
           <Tabs.Trigger value="courses">
-            <LuFolder />
+            <LuNotebookPen />
             Courses
           </Tabs.Trigger>
           <Tabs.Trigger value="students">
-            <LuSquareCheck />
+            <LuUser />
             Students
           </Tabs.Trigger>
         </Tabs.List>
