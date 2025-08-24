@@ -9,29 +9,33 @@ import {
   Span,
 } from "@chakra-ui/react";
 import { LogOutIcon } from "lucide-react";
-import { useRouter } from "nextjs-toploader/app";
-import { use, useState, useTransition } from "react";
+import { use, useState } from "react";
 import { UserContext } from "../context/UserContext";
+
+
 export default function LogoutButton() {
-  const router = useRouter();
   const { setLoggingOut } = use(UserContext);
 
   const [, /* logoutError */ setLogOutError] = useState<string>();
-  const [loggingOut, logOutTransition] = useTransition();
+  const [loggingOut, setUserLoggingOut] = useState(false);
 
   const logOut = () => {
-    logOutTransition(async () => {
+    const invoke = async () => {
+      setLogOutError(undefined)
       setLoggingOut(true);
+      setUserLoggingOut(true);
       const response = await new UserRepository().logout();
 
       if (!response.success) {
         setLogOutError(response.message);
         setLoggingOut(false);
+        setUserLoggingOut(false);
         return;
       }
 
-      router.replace("/", { scroll: true });
-    });
+      location.replace("/");
+    };
+    invoke();
   };
 
   return (
