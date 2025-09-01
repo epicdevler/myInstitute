@@ -22,29 +22,14 @@ import {
 } from "@chakra-ui/react";
 import { MoreVerticalIcon } from "lucide-react";
 import React from "react";
+import { useLoadStudents } from "../../../../hooks/useLoadStudents";
 
-export default function StudentsTab() {
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [loadingError, setLoadingError] = React.useState<string | undefined>();
-  const [students, setStudents] = React.useState<User[]>([]);
+export default function StudentsTab({departmentId}:{departmentId?: string}) {
+  const { isLoading, loadingError, students } = useLoadStudents(departmentId);
 
   const [selectedStudentID, setSelectedStudentID] = React.useState<
     string | null
   >();
-
-  React.useEffect(() => {
-    setIsLoading(true);
-    setLoadingError(undefined);
-
-    StudentRepository.getAllStudents().then((res) => {
-      if (res.success && res.data) {
-        setStudents(res.data);
-      } else {
-        setLoadingError(res.message || "Failed to load students");
-      }
-      setIsLoading(false);
-    });
-  }, []);
 
   const handleUserSelect = (studentId?: string) => {
     setSelectedStudentID(studentId);

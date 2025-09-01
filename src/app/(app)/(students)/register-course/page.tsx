@@ -135,7 +135,7 @@ export default function StudentRegisterCourse() {
                     {semester} Semester
                   </Heading>
                   <SimpleGrid columns={[1, null, 3]} gap={4}>
-                    {filteredCourses.map((course) => {
+                    {groupedCourses.get(semester)?.map((course) => {
                       return (
                         <GridItem key={course.id} asChild>
                           <CheckboxCard.Root

@@ -15,8 +15,6 @@ export const UserCookieHandler = {
         await getCookie(USER_COOKIE_KEY);
       }
 
-
-      console.error("User: ", cookieData && JSON.parse(cookieData))
       return {
         success: true,
         data: cookieData && JSON.parse(cookieData),

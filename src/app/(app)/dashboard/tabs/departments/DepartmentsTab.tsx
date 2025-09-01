@@ -22,9 +22,11 @@ import { MoreVerticalIcon, PlusIcon } from "lucide-react";
 import { useCallback, useState, useTransition } from "react";
 import EmptyState from "../../EmptyState";
 import DepartmentDialog from "./dialog/Dialog";
-import { useLoadDepartments } from "./useLoadDepartments";
+import { useLoadDepartments } from "../../../../hooks/useLoadDepartments";
+import { useRouter } from "nextjs-toploader/app";
 
 export default function DepartmentsTab() {
+  const router = useRouter()
   const { isLoading, loadingError, departments, retry } = useLoadDepartments();
 
   const [openAddDialog, setOpenAddDialog] = useState(false);
@@ -80,6 +82,7 @@ export default function DepartmentsTab() {
                     key={department.id}
                     sn={index + 1}
                     department={department}
+                    onClick={() => {router.push(`/dashboard/${department.id}`)}}
                     onSuccess={() => retry()}
                   />
                 );
@@ -97,10 +100,12 @@ export default function DepartmentsTab() {
 function DepartmentItem({
   sn,
   department,
+  onClick,
   onSuccess,
 }: {
   sn: number;
   department: Department;
+  onClick: () => void;
   onSuccess: () => void;
 }) {
   const [, /* isDeleting */ startDeleting] = useTransition();
@@ -122,12 +127,12 @@ function DepartmentItem({
   };
 
   return (
-    <HStack p={3} rounded="xl" gap={4} _hover={{ bg: "bg.subtle" }}>
+    <HStack onClick={onClick} p={3} rounded="xl" gap={4} _hover={{ bg: "bg.subtle" }}>
       <Center boxSize={"10"} rounded="full" borderWidth={"thin"}>
         {sn}
       </Center>
       <Box flex={1}>
-        <Text fontSize="lg">{department.name}</Text>
+        <Text fontSize="lg" textTransform={'capitalize'}>{department.name}</Text>
         <HStack
           hidden
           align={["start", null, "center"]}

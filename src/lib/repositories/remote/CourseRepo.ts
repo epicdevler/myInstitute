@@ -21,7 +21,7 @@ export class CourseRepository {
   ): Promise<DBResponse<undefined>> {
     return await runTransaction(firestoreDB, async (transaction) => {
       try {
-        const courseID = course.code.replaceAll(" ", "-");
+        const courseID = course.code.replaceAll(" ", "-").toLowerCase();
         const courseDoc = doc(this.courseCollection, courseID);
         const existing = (await transaction.get(courseDoc)).exists();
 

@@ -20,13 +20,13 @@ import CourseDialog from "./dialog/Dialog";
 import { LevelFilter } from "../../../../components/LevelFilter";
 import useGroupCourse from "@/app/hooks/useGroupCourse";
 
-export default function CoursesTab() {
+export default function CoursesTab({departmentId}:{departmentId?: string}) {
   const {
     isLoading,
     error: loadingError,
     courses,
     onRetry,
-  } = useLoadCourses({ enabled: true });
+  } = useLoadCourses({ enabled: true, departmentId: departmentId });
   const { filteredCourses, level, onSelect } = useLevelFilter(courses);
   const groupedCourses = useGroupCourse(filteredCourses);
   const [selected, setSelected] = useState<string>();
@@ -88,7 +88,7 @@ export default function CoursesTab() {
                     {semester} Semester
                   </Heading>
                   <SimpleGrid columns={[2, null, 3]} gap={[2, null, 4]} mt={5}>
-                    {filteredCourses.map((course) => {
+                    {groupedCourses.get(semester)?.map((course) => {
                       return (
                         <GridItem key={course.id} asChild>
                           <CourseItem

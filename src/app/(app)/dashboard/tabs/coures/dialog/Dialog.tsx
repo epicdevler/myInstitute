@@ -1,4 +1,4 @@
-import { useLoadDepartments } from "@/app/(app)/dashboard/tabs/departments/useLoadDepartments";
+import { useLoadDepartments } from "@/app/hooks/useLoadDepartments";
 import { Field } from "@/app/components/ui/field";
 import { toaster } from "@/app/components/ui/toaster";
 import { Course, LevelList, SemesterList } from "@/lib/models/Course";

@@ -1,5 +1,5 @@
 "use client";
-import { useLoadDepartments } from "@/app/(app)/dashboard/tabs/departments/useLoadDepartments";
+import { useLoadDepartments } from "@/app/hooks/useLoadDepartments";
 import { Field } from "@/app/components/ui/field";
 import { PasswordInput } from "@/app/components/ui/password-input";
 import { toaster } from "@/app/components/ui/toaster";

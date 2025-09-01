@@ -67,6 +67,30 @@ export function CourseItem(props: CourseItemProps) {
           {course.title}
         </Text>
 
+        {
+          /* admin &&  */(
+            <>
+            <Text mt={4} fontSize={"sm"} color="fg.muted">
+                    Departments
+                  </Text>
+                  <HStack flexWrap={"wrap"} py={2}>
+                    {course.departmentId.map((code) => {
+                      return (
+                        <Badge
+                          rounded="full"
+                          colorPalette={"gray"}
+                          variant={"outline"}
+                          key={code}
+                        >
+                          {code}
+                        </Badge>
+                      );
+                    })}
+                  </HStack>
+                  </>
+          )
+        }
+
         {/* </Card.Body> */}
         {/* </Card.Root> */}
       </Card.Body>
@@ -100,25 +124,7 @@ export function CourseItem(props: CourseItemProps) {
                   <Text fontSize={"sm"} textTransform={"capitalize"}>
                     Semester {course.semester}
                   </Text>
-                  <Text fontSize={"sm"}>Course Unit {course.creditUnit}</Text>
-
-                  <Text mt={4} fontSize={"sm"} color="fg.muted">
-                    Departments
-                  </Text>
-                  <HStack flexWrap={"wrap"} py={2}>
-                    {course.departmentId.map((code) => {
-                      return (
-                        <Badge
-                          rounded="full"
-                          colorPalette={"gray"}
-                          variant={"outline"}
-                          key={code}
-                        >
-                          {code}
-                        </Badge>
-                      );
-                    })}
-                  </HStack>
+                  <Text fontSize={"sm"}>Course Unit {course.creditUnit}</Text>                  
 
                   <Text mt={4} mb={1} fontSize={"sm"} color="fg.muted">
                     Description
