@@ -13,7 +13,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body >
-        <Provider storageKey="myInstitute">{children}</Provider>
+        <Provider storageKey="myInstituteV1" enableSystem={false}>{children}</Provider>
         <NextTopLoader color="orange" />
         <Analytics />
       </body>
