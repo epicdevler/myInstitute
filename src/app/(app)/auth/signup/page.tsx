@@ -127,8 +127,8 @@ export default function Page() {
   const collection = useMemo(() => {
     return createListCollection({
       items: departments,
-      itemToString: (pokemon) => pokemon.name + " " + pokemon.code,
-      itemToValue: (pokemon) => pokemon.id,
+      itemToString: (department) => department.name + " " + department.code,
+      itemToValue: (department) => department.id,
     });
   }, [departments]);
 
