@@ -1,14 +1,16 @@
 import { LogoText } from "@/app/components/LogoText";
-import { Button, ButtonGroup, Heading, Text } from "@chakra-ui/react";
+import { Button, ButtonGroup, Text } from "@chakra-ui/react";
 import Link from "next/link";
 
 
 export default function AuthenticationPage() {
   return (
     <>
-      <Heading size="3xl">
-        Welcome to <LogoText />
-      </Heading>
+      <LogoText />
+
+      <Text fontSize={'xl'} fontWeight={'bold'} mt={5}>
+        Welcome
+      </Text>
       <Text>Select how you would like to proceed</Text>
 
       <ButtonGroup gap={4} mt={20} align={"stretch"} w="full" flexDir="column">

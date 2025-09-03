@@ -1,14 +1,14 @@
 "use client";
-import { useLoadDepartments } from "@/app/hooks/useLoadDepartments";
+import { LogoText } from "@/app/components/LogoText";
 import { Field } from "@/app/components/ui/field";
 import { PasswordInput } from "@/app/components/ui/password-input";
 import { toaster } from "@/app/components/ui/toaster";
+import { useLoadDepartments } from "@/app/hooks/useLoadDepartments";
 import { UserRepository } from "@/lib/repositories/remote/UserRepo";
 import {
   Alert,
   Button,
   createListCollection,
-  Heading,
   HStack,
   Input,
   InputGroup,
@@ -16,7 +16,7 @@ import {
   Select,
   Spinner,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "nextjs-toploader/app";
@@ -134,8 +134,10 @@ export default function Page() {
 
   return (
     <>
-      <Heading size="3xl">Sign Up</Heading>
-      <Text mb={5}></Text>
+      <LogoText />
+      
+        <Text my={8} fontSize={"xl"} textAlign={'center'} w='full'>Sign Up</Text>        
+      
 
       <Alert.Root hidden={!errors.submitError} status={"error"} mb={5}>
         <Alert.Indicator />

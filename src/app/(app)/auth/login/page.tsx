@@ -5,11 +5,10 @@ import { PasswordInput } from "@/app/components/ui/password-input";
 import {
   Alert,
   Button,
-  Heading,
   Input,
   Span,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useState, useTransition } from "react";
@@ -101,13 +100,10 @@ export default function Page() {
 
   return (
     <>
-      <Heading size="4xl" lineHeight={"shorter"}>
-        <Span fontSize={"md"}>Welcome back to </Span>
-        <br />
-        <LogoText />
-      </Heading>
-      <Text mb={5}></Text>
-
+    <LogoText />
+      
+        <Text my={8} fontSize={"xl"} textAlign={'center'} w='full'>Welcome back</Text>        
+      
       <Alert.Root hidden={!errors.submitError} status={"error"} mb={5}>
         <Alert.Indicator />
         <Alert.Content>

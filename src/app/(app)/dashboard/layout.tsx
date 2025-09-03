@@ -1,14 +1,7 @@
-
 import { LogoText } from "@/app/components/LogoText";
 import LogoutButton from "@/app/components/LogoutButton";
 import { ColorModeButton } from "@/app/components/ui/color-mode";
-import {
-  Box,
-  ButtonGroup,
-  Container,
-  Heading,
-  HStack
-} from "@chakra-ui/react";
+import { Box, ButtonGroup, Container, HStack } from "@chakra-ui/react";
 import Link from "next/link";
 import { ReactNode } from "react";
 
@@ -23,20 +16,16 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
   );
 }
 
-function Navbar() {
+export function Navbar() {
   return (
     <Box as="nav" borderBottomWidth={"thin"}>
       <Container maxW={"5xl"}>
         <HStack justifyContent={"space-between"} py={5}>
-          <Heading size="xl">
-            <Link href="/" replace>
-              <LogoText />
-            </Link>{" "}
-            Dashboard
-          </Heading>
-
+          <Link href="/" replace>
+            <LogoText />
+          </Link>
           <ButtonGroup>
-            <ColorModeButton rounded="full" variant="outline" />
+            <ColorModeButton hidden rounded="full" variant="outline" />
             <LogoutButton />
           </ButtonGroup>
         </HStack>
