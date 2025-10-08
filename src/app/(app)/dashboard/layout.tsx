@@ -36,7 +36,7 @@ export function Navbar({ isAdmin }: { isAdmin?: boolean }) {
               rounded={"full"}
               asChild
               hidden={isAdmin}
-              hideBelow={'md'}
+              hideBelow={"md"}
             >
               <Link href="/carry-overs">Carry Overs</Link>
             </Button>
@@ -46,13 +46,15 @@ export function Navbar({ isAdmin }: { isAdmin?: boolean }) {
               rounded={"full"}
               asChild
               hidden={isAdmin}
-              hideBelow={'md'}
+              hideBelow={"md"}
             >
               <Link href="/spill-overs">Spill Overs</Link>
             </Button>
             <ColorModeButton hidden={false} rounded="full" variant="outline" />
-            <LogoutButton hideBelow="md" />
-            <MobileNavButton pathname={pathname} isAdmin={isAdmin} />
+            <LogoutButton hideBelow={isAdmin ? "md" : undefined} />
+            {!isAdmin && (
+              <MobileNavButton pathname={pathname} isAdmin={isAdmin} />
+            )}
           </ButtonGroup>
         </HStack>
       </Container>

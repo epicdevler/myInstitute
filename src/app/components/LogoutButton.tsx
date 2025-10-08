@@ -48,7 +48,8 @@ export default function LogoutButton({ hideBelow }: { hideBelow?: "md" }) {
       >
         <Dialog.Trigger asChild>
           <Button rounded="full" variant={"outline"} hideBelow={hideBelow}>
-            <LogOutIcon /> <Span hideBelow={hideBelow}>Logout</Span>
+            <LogOutIcon />{" "}
+            <Span hideBelow={!hideBelow ? "md" : undefined}>Logout</Span>
           </Button>
         </Dialog.Trigger>
         <Portal>

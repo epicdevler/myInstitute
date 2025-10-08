@@ -160,9 +160,9 @@ export default function StudentRegisterCourse() {
                 >
                   {Array.from(groupedCourses.keys()).map((semester) => (
                     <Box key={semester} mb={8}>
-                      <Heading size="md" mb={4} textTransform={"capitalize"}>
+                      <Text fontSize="sm" color='fg.muted' mb={4} textTransform={"capitalize"}>
                         {semester} Semester
-                      </Heading>
+                      </Text>
                       <SimpleGrid columns={[1, null, 3]} gap={4}>
                         {groupedCourses.get(semester)?.map((course) => {
                           return (

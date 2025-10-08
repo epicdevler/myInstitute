@@ -10,6 +10,7 @@ import {
   HStack,
   Separator,
   SimpleGrid,
+  Text,
   Spinner,
 } from "@chakra-ui/react";
 import { PlusIcon } from "lucide-react";
@@ -68,9 +69,9 @@ export default function CarryOverPage() {
               <Separator my={4} />
               {Array.from(groupedCourses.keys()).map((semester) => (
                 <Box key={semester} mb={8}>
-                  <Heading size="md" mb={4} textTransform={"capitalize"}>
+                  <Text fontSize="sm"  color='fg.muted' mb={4} textTransform={"capitalize"}>
                     {semester} Semester
-                  </Heading>
+                  </Text>
                   <SimpleGrid columns={[1, null, 3]} gap={[2, null, 4]} mb={20}>
                     {groupedCourses.get(semester)?.map((course) => {
                       return (

@@ -12,6 +12,7 @@ import {
   Separator,
   SimpleGrid,
   Spinner,
+  Text,
 } from "@chakra-ui/react";
 import { PlusIcon } from "lucide-react";
 import { useCallback, useState } from "react";
@@ -20,7 +21,11 @@ import CourseDialog from "./dialog/Dialog";
 import { LevelFilter } from "../../../../components/LevelFilter";
 import useGroupCourse from "@/app/hooks/useGroupCourse";
 
-export default function CoursesTab({departmentId}:{departmentId?: string}) {
+export default function CoursesTab({
+  departmentId,
+}: {
+  departmentId?: string;
+}) {
   const {
     isLoading,
     error: loadingError,
@@ -84,9 +89,14 @@ export default function CoursesTab({departmentId}:{departmentId?: string}) {
               <Separator my={4} />
               {Array.from(groupedCourses.keys()).map((semester) => (
                 <Box key={semester} mb={8}>
-                  <Heading size="md" mb={4} textTransform={"capitalize"}>
+                  <Text
+                    fontSize="sm"
+                    color="fg.muted"
+                    mb={4}
+                    textTransform={"capitalize"}
+                  >
                     {semester} Semester
-                  </Heading>
+                  </Text>
                   <SimpleGrid columns={[2, null, 3]} gap={[2, null, 4]} mt={5}>
                     {groupedCourses.get(semester)?.map((course) => {
                       return (
