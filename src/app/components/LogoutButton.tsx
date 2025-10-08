@@ -12,8 +12,7 @@ import { LogOutIcon } from "lucide-react";
 import { use, useState } from "react";
 import { UserContext } from "../context/UserContext";
 
-
-export default function LogoutButton() {
+export default function LogoutButton({ hideBelow }: { hideBelow?: "md" }) {
   const { setLoggingOut } = use(UserContext);
 
   const [, /* logoutError */ setLogOutError] = useState<string>();
@@ -21,7 +20,7 @@ export default function LogoutButton() {
 
   const logOut = () => {
     const invoke = async () => {
-      setLogOutError(undefined)
+      setLogOutError(undefined);
       setLoggingOut(true);
       setUserLoggingOut(true);
       const response = await new UserRepository().logout();
@@ -41,20 +40,20 @@ export default function LogoutButton() {
   return (
     <>
       <Dialog.Root
-        placement={"center"}
+        placement={"top"}
         unmountOnExit
         closeOnEscape={!loggingOut}
         closeOnInteractOutside={!loggingOut}
         scrollBehavior={"inside"}
       >
         <Dialog.Trigger asChild>
-          <Button rounded="full" variant={"outline"}>
-            <LogOutIcon /> <Span hideBelow="md">Logout</Span>
+          <Button rounded="full" variant={"outline"} hideBelow={hideBelow}>
+            <LogOutIcon /> <Span hideBelow={hideBelow}>Logout</Span>
           </Button>
         </Dialog.Trigger>
         <Portal>
           <Dialog.Backdrop />
-          <Dialog.Positioner>
+          <Dialog.Positioner p={4}>
             <Dialog.Content>
               <Dialog.Header>
                 <Heading>Confirm Logout</Heading>

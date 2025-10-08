@@ -6,7 +6,12 @@ export async function middleware(req: NextRequest) {
   const cookieData = await UserCookieHandler.get(req).then((data) => data.data);
 
   const adminRoutes = ["/dashboard", "/departments", "/courses"];
-  const studentRoutes = ["/student", "/register-course", "/carry-overs", "/spill-overs"];
+  const studentRoutes = [
+    "/student",
+    "/register-course",
+    "/carry-overs",
+    "/spill-overs",
+  ];
 
   const pathname = req.nextUrl.pathname;
 
