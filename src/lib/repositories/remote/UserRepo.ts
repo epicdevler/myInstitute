@@ -156,7 +156,8 @@ export class UserRepository {
 
   async registerCourses(
     userId: string,
-    courseIds: string[]
+    courseIds: string[],
+    type?: "CarryOver" | "SpilledOver" | "Normal"
   ): Promise<DBResponse<undefined>> {
     return runTransaction(firestoreDB, async (transaction) => {
       try {
@@ -169,7 +170,14 @@ export class UserRepository {
 
         const userData = userSnapshot.data() as User;
 
-        const registered = userData.registeredCourses ?? [];
+        const courseNameProp =
+          type == "CarryOver"
+            ? "carryOverCourses"
+            : type == "SpilledOver"
+              ? "spilledCourses"
+              : "registeredCourses";
+
+        const courses = userData[courseNameProp] ?? [];
 
         // Case 1: No incoming data
         if (courseIds.length === 0) {
@@ -181,18 +189,22 @@ export class UserRepository {
 
         // Case 2: No changes (same length and same contents)
         const isSame =
-          registered.length === next.length &&
-          registered.every((id) => next.includes(id));
+          courses.length === next.length &&
+          courses.every((id) => next.includes(id));
 
         if (isSame) {
-          throw new Error("No changes made");
+          return {
+            success: false,
+            message:
+              "No changes made, you didn't not add or remove from already existing courses",
+          };
         }
 
         // Case 3: Update to exactly match incoming
-        userData.registeredCourses = next;
+        userData[courseNameProp] = next;
 
         transaction.update(userDoc, {
-          registeredCourses: userData.registeredCourses,
+          [courseNameProp]: userData[courseNameProp],
         });
 
         return {

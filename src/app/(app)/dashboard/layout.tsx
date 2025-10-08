@@ -1,22 +1,26 @@
+"use client";
 import { LogoText } from "@/app/components/LogoText";
 import LogoutButton from "@/app/components/LogoutButton";
 import { ColorModeButton } from "@/app/components/ui/color-mode";
-import { Box, ButtonGroup, Container, HStack } from "@chakra-ui/react";
+import { Box, Button, ButtonGroup, Container, HStack } from "@chakra-ui/react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 
 export default function StudentLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <Box as="section">
-        <Navbar />
+        <Navbar isAdmin={true} />
         <Container maxW="5xl">{children}</Container>
       </Box>
     </>
   );
 }
 
-export function Navbar() {
+export function Navbar({ isAdmin }: { isAdmin?: boolean }) {
+  const pathname = usePathname();
+
   return (
     <Box as="nav" borderBottomWidth={"thin"}>
       <Container maxW={"5xl"}>
@@ -25,7 +29,25 @@ export function Navbar() {
             <LogoText />
           </Link>
           <ButtonGroup>
-            <ColorModeButton hidden rounded="full" variant="outline" />
+            <Button
+              variant={pathname.endsWith("/carry-overs") ? "subtle" : "ghost"}
+              colorPalette={"orange"}
+              rounded={"full"}
+              asChild
+              hidden={isAdmin}
+            >
+              <Link href="/carry-overs">Carry Overs</Link>
+            </Button>
+            <Button
+              variant={pathname.endsWith("/spill-overs") ? "subtle" : "ghost"}
+              colorPalette={"orange"}
+              rounded={"full"}
+              asChild
+              hidden={isAdmin}
+            >
+              <Link href="/spill-overs">Spill Overs</Link>
+            </Button>
+            <ColorModeButton hidden={false} rounded="full" variant="outline" />
             <LogoutButton />
           </ButtonGroup>
         </HStack>

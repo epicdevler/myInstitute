@@ -1,5 +1,7 @@
 "use client";
+import { ErrorState } from "@/app/components/ErrorState";
 import { UserContext } from "@/app/context/UserContext";
+import useGroupCourse from "@/app/hooks/useGroupCourse";
 import {
   Box,
   Button,
@@ -9,47 +11,39 @@ import {
   Separator,
   SimpleGrid,
   Spinner,
-  Text,
 } from "@chakra-ui/react";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { use } from "react";
-import { CourseItem } from "./CourseItem";
-import { EmptyCourseState } from "./EmptyCourseState";
-import { useLoadCourses } from "../../../hooks/useLoadCourses";
-import { ErrorState } from "@/app/components/ErrorState";
 import { LevelFilter } from "../../../components/LevelFilter";
 import { useLevelFilter } from "../../../hooks/useLevelFilter";
-import useGroupCourse from "@/app/hooks/useGroupCourse";
+import { useLoadCourses } from "../../../hooks/useLoadCourses";
+import { CourseItem } from "../student/CourseItem";
+import { EmptyState } from "@/app/components/EmptyCourseState";
 
-export default function StudentHomePage() {
+export default function CarryOverPage() {
   const { user } = use(UserContext);
 
   const { isLoading, courses, error } = useLoadCourses({
     enabled: true,
-    courseId: user?.registeredCourses ?? [],
+    courseId: user?.carryOverCourses ?? [],
   });
   const { filteredCourses, level, onSelect } = useLevelFilter(courses);
   const groupedCourses = useGroupCourse(filteredCourses);
 
   return (
     <>
-      <Heading mt={10} size="3xl">
-        Welcome back, {user?.lastName}
-      </Heading>
-      <Text mt={2} mb={2}>
-        Petroleom Training Institute, {user?.departmentId}
-      </Text>
-
-      <HStack justify={"space-between"} my={4} py={2}>
-        <Text fontWeight={"semibold"}>Your Registered Courses</Text>
+      <HStack justify={"space-between"} mt={10} py={2}>
+        <Heading fontWeight={"semibold"} size="3xl">
+          Your Carry Over Courses
+        </Heading>
         <Button
           hidden={courses.length < 1}
           asChild
           variant={"outline"}
           rounded="full"
         >
-          <Link href="/register-course">
+          <Link href="/register-course?type=carry-over">
             <PlusIcon /> Edit or Add
           </Link>
         </Button>
@@ -91,7 +85,13 @@ export default function StudentHomePage() {
             </Box>
           )}
 
-          {filteredCourses.length < 1 && <EmptyCourseState />}
+          {filteredCourses.length < 1 && (
+            <EmptyState
+              title="No Carry Over Courses"
+              actionRedirect="/register-course?type=carry-over"
+              actionLabel="Register"
+            />
+          )}
         </>
       )}
 

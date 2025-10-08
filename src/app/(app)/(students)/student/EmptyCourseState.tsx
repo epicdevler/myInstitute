@@ -1,6 +1,6 @@
 import { Box, EmptyState, Button } from "@chakra-ui/react";
 import Link from "next/link";
-import EmptyStateIllustration from "../../../../../public/assets/empty_state.svg";
+import EmptyStateIllustration from "@public/assets/empty_state.svg";
 import Image from "next/image";
 
 export function EmptyCourseState() {

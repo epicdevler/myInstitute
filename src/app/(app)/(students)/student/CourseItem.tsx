@@ -57,9 +57,10 @@ export function CourseItem(props: CourseItemProps) {
       colorPalette={"orange"}
       variant={"subtle"}
       w="full"
+      justifyContent={'stretch'}
       {...rest}
     >
-      <Card.Body>
+      <Card.Body h='full' flex='1'>
         {/* <Card.Root size="sm" cursor={"pointer"}> */}
         {/* <Card.Body> */}
         <Card.Title>{course.code}</Card.Title>
@@ -68,27 +69,26 @@ export function CourseItem(props: CourseItemProps) {
         </Text>
 
         {
-          /* admin &&  */(
-            <>
+          /* admin &&  */ <>
             <Text mt={4} fontSize={"sm"} color="fg.muted">
-                    Departments
-                  </Text>
-                  <HStack flexWrap={"wrap"} py={2}>
-                    {course.departmentId.map((code) => {
-                      return (
-                        <Badge
-                          rounded="full"
-                          colorPalette={"gray"}
-                          variant={"outline"}
-                          key={code}
-                        >
-                          {code}
-                        </Badge>
-                      );
-                    })}
-                  </HStack>
-                  </>
-          )
+              Departments
+            </Text>
+            <HStack flexWrap={"wrap"} py={2}>
+              {course.departmentId.map((code) => {
+                return (
+                  <Badge
+                    rounded="full"
+                    colorPalette={"gray"}
+                    variant={"outline"}
+                    textTransform={"uppercase"}
+                    key={code}
+                  >
+                    {code}
+                  </Badge>
+                );
+              })}
+            </HStack>
+          </>
         }
 
         {/* </Card.Body> */}
@@ -124,7 +124,7 @@ export function CourseItem(props: CourseItemProps) {
                   <Text fontSize={"sm"} textTransform={"capitalize"}>
                     Semester {course.semester}
                   </Text>
-                  <Text fontSize={"sm"}>Course Unit {course.creditUnit}</Text>                  
+                  <Text fontSize={"sm"}>Course Unit {course.creditUnit}</Text>
 
                   <Text mt={4} mb={1} fontSize={"sm"} color="fg.muted">
                     Description

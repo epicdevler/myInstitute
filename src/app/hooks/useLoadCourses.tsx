@@ -8,6 +8,7 @@ export type FetchOption = {
   departmentId?: string;
   courseId?: string[];
 };
+
 export function useLoadCourses(options: FetchOption) {
   const { enabled, departmentId, courseId } = options;
 
@@ -38,7 +39,7 @@ export function useLoadCourses(options: FetchOption) {
       setLoading(false);
     };
     invoke();
-  }, [enabled, departmentId, courseId, retry]);
+  }, [enabled, departmentId, courseId?.length, retry]);
 
   return {
     isLoading,

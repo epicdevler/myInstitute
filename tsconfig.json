@@ -20,8 +20,8 @@
       }
     ],
     "paths": {
-      "@public": ["./public/*"],
       "@/*": ["./src/*"],
+      "@public/*": ["./public/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/lib/repositories/remote/config.ts"],

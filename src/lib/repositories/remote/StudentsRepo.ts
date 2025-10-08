@@ -32,10 +32,18 @@ export const StudentRepository = {
     }
   },
 
-  getAllByDepartment: async (departmentId: string): Promise<DBResponse<User[]>> => {
+  getAllByDepartment: async (
+    departmentId: string
+  ): Promise<DBResponse<User[]>> => {
     try {
       const students = await getDocs(
-        query(userCollection, and(where("role", "==", "student"), where("departmentId", "==", departmentId)))
+        query(
+          userCollection,
+          and(
+            where("role", "==", "student"),
+            where("departmentId", "==", departmentId)
+          )
+        )
       ).then((snapshot) =>
         snapshot.docs.map((doc) => ({
           id: doc.id,

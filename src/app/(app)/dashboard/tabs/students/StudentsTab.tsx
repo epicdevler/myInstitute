@@ -24,7 +24,11 @@ import { MoreVerticalIcon } from "lucide-react";
 import React from "react";
 import { useLoadStudents } from "../../../../hooks/useLoadStudents";
 
-export default function StudentsTab({departmentId}:{departmentId?: string}) {
+export default function StudentsTab({
+  departmentId,
+}: {
+  departmentId?: string;
+}) {
   const { isLoading, loadingError, students } = useLoadStudents(departmentId);
 
   const [selectedStudentID, setSelectedStudentID] = React.useState<
@@ -187,6 +191,56 @@ const StudentDetail = ({
                             No registered courses
                           </Text>
                         )}
+                      </HStack>
+                    </Box>
+
+                    <Box>
+                      <Text fontSize="sm" color="fg.muted">
+                        Spill Over Courses
+                      </Text>
+                      <HStack mt={2} gap={2} flexWrap={"wrap"}>
+                        {students?.spilledCourses?.map((course) => (
+                          <Box
+                            key={course}
+                            p={3}
+                            rounded="lg"
+                            borderWidth={"thin"}
+                            textTransform={"uppercase"}
+                          >
+                            <Text>{course.replace("-", " ")}</Text>
+                          </Box>
+                        ))}
+                        {students?.spilledCourses?.length === 0 ||
+                          (!students?.spilledCourses && (
+                            <Text fontSize="sm" color="fg.muted">
+                              No spill over courses
+                            </Text>
+                          ))}
+                      </HStack>
+                    </Box>
+
+                    <Box>
+                      <Text fontSize="sm" color="fg.muted">
+                        Carry Over Courses
+                      </Text>
+                      <HStack mt={2} gap={2} flexWrap={"wrap"}>
+                        {students?.carryOverCourses?.map((course) => (
+                          <Box
+                            key={course}
+                            p={3}
+                            rounded="lg"
+                            borderWidth={"thin"}
+                            textTransform={"uppercase"}
+                          >
+                            <Text>{course.replace("-", " ")}</Text>
+                          </Box>
+                        ))}
+                        {students?.carryOverCourses?.length === 0 ||
+                          (!students?.carryOverCourses && (
+                            <Text fontSize="sm" color="fg.muted">
+                              No carry over courses
+                            </Text>
+                          ))}
                       </HStack>
                     </Box>
                   </VStack>
