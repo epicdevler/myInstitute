@@ -11,7 +11,7 @@ import {
   Input,
   Portal,
 } from "@chakra-ui/react";
-import { ChangeEvent, FormEvent, useState, useTransition } from "react";
+import { ChangeEvent, FormEvent, SubmitEventHandler, useState, useTransition } from "react";
 
 type DepartmentFields = {
   name: string;
@@ -37,7 +37,7 @@ export default function DepartmentDialog({
 
   const [errors, setErrors] = useState<DepartmentFieldErrors>({});
 
-  const handleSubmit = (event: FormEvent<HTMLDivElement>) => {
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = event => {
     event.preventDefault();
     setErrors((prev) => ({ ...prev, submitError: undefined }));
     submitTransition(async () => {

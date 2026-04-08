@@ -24,7 +24,7 @@ export function Navbar({ isAdmin }: { isAdmin?: boolean }) {
   return (
     <Box as="nav" borderBottomWidth={"thin"}>
       <Container maxW={"5xl"}>
-        <HStack justifyContent={"space-between"} py={5}>
+        <HStack justifyContent={"space-between"} py={1}>
           <Link href="/" replace>
             <LogoText />
           </Link>

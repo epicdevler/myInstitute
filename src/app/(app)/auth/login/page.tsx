@@ -11,7 +11,7 @@ import {
   VStack
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { ChangeEvent, FormEvent, useState, useTransition } from "react";
+import { ChangeEvent, FormEvent, SubmitEventHandler, useState, useTransition } from "react";
 import { commonProps } from "../signup/commonProps";
 
 import { toaster } from "@/app/components/ui/toaster";
@@ -64,7 +64,7 @@ export default function Page() {
     }));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLDivElement>) => {
+  const handleSubmit: SubmitEventHandler<HTMLDivElement> = event => {
     event.preventDefault();
     setErrors((prev) => ({
       ...prev,

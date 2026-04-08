@@ -23,6 +23,7 @@ import { useRouter } from "nextjs-toploader/app";
 import {
   ChangeEvent,
   FormEvent,
+  SubmitEventHandler,
   useMemo,
   useState,
   useTransition,
@@ -58,7 +59,7 @@ export default function Page() {
 
   const [errors, setErrors] = useState<LoginFieldErrors>({});
 
-  const handleSubmit = (event: FormEvent<HTMLDivElement>) => {
+  const handleSubmit: SubmitEventHandler<HTMLDivElement> = event => {
     event.preventDefault();
     setErrors((prev) => ({
       ...prev,

@@ -56,7 +56,7 @@ export default function StudentRegisterCourse() {
       ? user?.carryOverCourses
       : isSpillOver
         ? user?.spilledCourses
-        : user?.registeredCourses) || []
+        : user?.registeredCourses) || [],
   );
 
   const regCourse = () => {
@@ -64,7 +64,7 @@ export default function StudentRegisterCourse() {
       const response = await new UserRepository().registerCourses(
         user!.id,
         selectedCourse,
-        isSpillOver ? "SpilledOver" : isCarryOver ? "CarryOver" : "Normal"
+        isSpillOver ? "SpilledOver" : isCarryOver ? "CarryOver" : "Normal",
       );
 
       if (!response.success) {
@@ -79,7 +79,7 @@ export default function StudentRegisterCourse() {
 
       router.replace(
         isCarryOver ? "/carry-over" : isSpillOver ? "/spill-over" : "/",
-        { scroll: true }
+        { scroll: true },
       );
     });
   };
@@ -125,7 +125,7 @@ export default function StudentRegisterCourse() {
                 disabled={selectedCourse.length < 1}
                 loading={isRegingCourse}
                 loadingText="Registering"
-                colorPalette={"blue"}                
+                colorPalette={"blue"}
                 rounded="full"
                 px="8"
                 py={3}
@@ -136,7 +136,12 @@ export default function StudentRegisterCourse() {
           </Box>
 
           {regCourseErr && (
-            <Alert.Root /* maxW={"md"} */ size="sm" status={"error"} mt={10} mb={2}>
+            <Alert.Root
+              /* maxW={"md"} */ size="sm"
+              status={"error"}
+              mt={10}
+              mb={2}
+            >
               <Alert.Indicator />
               <Alert.Content>
                 {/* <Alert.Title>Submit Failed</Alert.Title> */}
@@ -157,13 +162,18 @@ export default function StudentRegisterCourse() {
                 <CheckboxGroup
                   value={selectedCourse}
                   onValueChange={(detail) => {
-                    setSelectedCourse(detail)
-                    setRegCourseErr(undefined)
+                    setSelectedCourse(detail);
+                    setRegCourseErr(undefined);
                   }}
                 >
                   {Array.from(groupedCourses.keys()).map((semester) => (
                     <Box key={semester} mb={8}>
-                      <Text fontSize="sm" color='fg.muted' mb={4} textTransform={"capitalize"}>
+                      <Text
+                        fontSize="sm"
+                        color="fg.muted"
+                        mb={4}
+                        textTransform={"capitalize"}
+                      >
                         {semester} Semester
                       </Text>
                       <SimpleGrid columns={[2, 3, 4]} gap={4}>
