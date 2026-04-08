@@ -54,7 +54,7 @@ export default function MobileNavButton({
                     variant={
                       pathname.endsWith("/carry-overs") ? "subtle" : "outline"
                     }
-                    colorPalette={"orange"}
+                    colorPalette={"blue"}
                     rounded={"full"}
                     asChild
                     hidden={isAdmin}
@@ -67,7 +67,7 @@ export default function MobileNavButton({
                     variant={
                       pathname.endsWith("/spill-overs") ? "subtle" : "outline"
                     }
-                    colorPalette={"orange"}
+                    colorPalette={"blue"}
                     rounded={"full"}
                     asChild
                     hidden={isAdmin}

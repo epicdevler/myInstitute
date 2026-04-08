@@ -15,7 +15,7 @@ export default function RootLayout({
         <Provider storageKey="myInstituteV1" enableSystem={false}>
           {children}
         </Provider>
-        <NextTopLoader color="orange" />
+        <NextTopLoader color="blue" />
         <Analytics />
       </body>
     </html>

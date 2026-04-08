@@ -3,6 +3,7 @@ import { ErrorState } from "@/app/components/ErrorState";
 import { User } from "@/lib/models/User";
 import { StudentRepository } from "@/lib/repositories/remote/StudentsRepo";
 import {
+  Badge,
   Box,
   Button,
   Center,
@@ -19,6 +20,7 @@ import {
   Spinner,
   Text,
   VStack,
+  Wrap,
 } from "@chakra-ui/react";
 import { MoreVerticalIcon } from "lucide-react";
 import React from "react";
@@ -50,14 +52,15 @@ export default function StudentsTab({
       )}
 
       {!isLoading && loadingError && (
-        <ErrorState title={"Failed to load students"} message={loadingError} />
+        <ErrorState  title={"Failed to load students"} message={loadingError} />
       )}
 
       {!isLoading && !loadingError && (
-        <VStack align="stretch" pt={8} cursor={"pointer"}>
-          {students.map((student) => {
+        <VStack align="stretch" cursor={"pointer"}>
+          {students.map((student, index) => {
             return (
               <StudentItem
+                sn={index + 1}
                 key={student.id}
                 student={student}
                 onSelect={() => handleUserSelect(student.id)}
@@ -117,8 +120,15 @@ const StudentDetail = ({
         <Drawer.Positioner>
           <Drawer.Content>
             <Drawer.Body>
-              <Container py={100} maxW={"4xl"}>
-                <Drawer.Title mb={10}>Student Detail</Drawer.Title>
+              <Container py={[8, null, 16]} maxW={"4xl"}>
+                <Drawer.Title
+                  borderBottomWidth={"thin"}
+                  fontSize={"2xl"}
+                  pb={2}
+                  mb={10}
+                >
+                  Student Detail
+                </Drawer.Title>
                 {isLoading && (
                   <Center>
                     <Spinner />
@@ -177,14 +187,15 @@ const StudentDetail = ({
                       </Text>
                       <HStack mt={2} gap={2} flexWrap={"wrap"}>
                         {students.registeredCourses.map((course) => (
-                          <Box
+                          <Badge
                             key={course}
                             p={3}
                             rounded="lg"
                             borderWidth={"thin"}
+                            textTransform={"uppercase"}
                           >
                             <Text>{course.replace("-", " ")}</Text>
-                          </Box>
+                          </Badge>
                         ))}
                         {students.registeredCourses.length === 0 && (
                           <Text fontSize="sm" color="fg.muted">
@@ -200,7 +211,7 @@ const StudentDetail = ({
                       </Text>
                       <HStack mt={2} gap={2} flexWrap={"wrap"}>
                         {students?.spilledCourses?.map((course) => (
-                          <Box
+                          <Badge
                             key={course}
                             p={3}
                             rounded="lg"
@@ -208,7 +219,7 @@ const StudentDetail = ({
                             textTransform={"uppercase"}
                           >
                             <Text>{course.replace("-", " ")}</Text>
-                          </Box>
+                          </Badge>
                         ))}
                         {students?.spilledCourses?.length === 0 ||
                           (!students?.spilledCourses && (
@@ -225,7 +236,7 @@ const StudentDetail = ({
                       </Text>
                       <HStack mt={2} gap={2} flexWrap={"wrap"}>
                         {students?.carryOverCourses?.map((course) => (
-                          <Box
+                          <Badge
                             key={course}
                             p={3}
                             rounded="lg"
@@ -233,7 +244,7 @@ const StudentDetail = ({
                             textTransform={"uppercase"}
                           >
                             <Text>{course.replace("-", " ")}</Text>
-                          </Box>
+                          </Badge>
                         ))}
                         {students?.carryOverCourses?.length === 0 ||
                           (!students?.carryOverCourses && (
@@ -258,40 +269,50 @@ const StudentDetail = ({
 };
 
 export function StudentItem({
+  sn,
   student,
   onSelect,
 }: {
+  sn: number;
   student: User;
   onSelect: () => void;
 }) {
   return (
     <HStack
       onClick={onSelect}
-      p={3}
+      py={3}
       rounded="xl"
       gap={4}
       _hover={{ bg: "bg.subtle" }}
     >
       <Center boxSize={"10"} rounded="full" borderWidth={"thin"}>
-        1
+        {sn}
       </Center>
       <Box flex={1}>
-        <Text fontSize="lg">
-          {student.firstName} {student.lastName}
-        </Text>
-        <HStack
-          align={["start", null, "center"]}
-          gap={[1, null, 4]}
-          flexDir={["column", null, "row"]}
+        <HStack>
+          <Text fontSize="lg">
+            {student.firstName} {student.lastName}
+          </Text>
+          <Circle size={1} bg="fg.subtle" />
+          <Badge fontSize="sm" textTransform={"uppercase"}>
+            {student.departmentId}
+          </Badge>
+        </HStack>
+
+        <Wrap
+          align={["center"]}
+          gap={[2]}
+          // flexDir={["column", null, "row"]}
           color="fg.muted"
         >
           <Text fontSize="sm">
-            {student.registeredCourses.length} Registered Course
-            {student.registeredCourses.length > 1 ? "s" : ""}
+            {student.registeredCourses.length} Registered
           </Text>
-          <Circle size={1} bg="bg.inverted" hideBelow={"md"} />
-          <Text fontSize="sm">{student.departmentId}</Text>
-        </HStack>
+          <Circle size={1} bg="fg.subtle" />
+          <Text fontSize="sm">{student.spilledCourses?.length ?? 0} Spill</Text>
+          <Circle size={1} bg="fg.subtle" />
+          <Text fontSize="sm">{student.carryOverCourses?.length ?? 0} CO</Text>
+        </Wrap>
       </Box>
       <Menu.Root>
         <Menu.Trigger asChild>

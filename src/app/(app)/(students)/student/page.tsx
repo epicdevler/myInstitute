@@ -77,7 +77,7 @@ export default function StudentHomePage() {
                   <Heading size="md" mb={4} textTransform={"capitalize"}>
                     {semester} Semester
                   </Heading>
-                  <SimpleGrid columns={[1, null, 3]} gap={[2, null, 4]} mb={20}>
+                  <SimpleGrid columns={[2, 3, 4]} gap={4} mb={20}>
                     {groupedCourses.get(semester)?.map((course) => {
                       return (
                         <GridItem key={course.id} asChild>

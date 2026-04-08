@@ -54,7 +54,7 @@ export function CourseItem(props: CourseItemProps) {
       _hover={{ bg: "bg.subtle" }}
       rounded={"xl"}
       size="sm"
-      colorPalette={"orange"}
+      colorPalette={"blue"}
       variant={"subtle"}
       w="full"
       justifyContent={'stretch'}
@@ -63,8 +63,8 @@ export function CourseItem(props: CourseItemProps) {
       <Card.Body h='full' flex='1'>
         {/* <Card.Root size="sm" cursor={"pointer"}> */}
         {/* <Card.Body> */}
-        <Card.Title>{course.code}</Card.Title>
-        <Text fontSize={"sm"} lineClamp={3}>
+        <Card.Title textTransform={"uppercase"}>{course.code}</Card.Title>
+        <Text fontSize={"sm"} color="fg.muted" lineClamp={3}>
           {course.title}
         </Text>
 

@@ -39,7 +39,7 @@ export function useLoadCourses(options: FetchOption) {
       setLoading(false);
     };
     invoke();
-  }, [enabled, departmentId, courseId?.length, retry]);
+  }, [enabled, departmentId, retry, courseId]);
 
   return {
     isLoading,

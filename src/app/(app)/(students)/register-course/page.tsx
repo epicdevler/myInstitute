@@ -125,10 +125,10 @@ export default function StudentRegisterCourse() {
                 disabled={selectedCourse.length < 1}
                 loading={isRegingCourse}
                 loadingText="Registering"
-                colorPalette={"orange"}
+                colorPalette={"blue"}                
                 rounded="full"
                 px="8"
-                py={6}
+                py={3}
               >
                 Register Selected
               </Button>
@@ -136,10 +136,10 @@ export default function StudentRegisterCourse() {
           </Box>
 
           {regCourseErr && (
-            <Alert.Root maxW={"md"} status={"error"} mt={10} mb={2}>
+            <Alert.Root /* maxW={"md"} */ size="sm" status={"error"} mt={10} mb={2}>
               <Alert.Indicator />
               <Alert.Content>
-                <Alert.Title>Submit Failed</Alert.Title>
+                {/* <Alert.Title>Submit Failed</Alert.Title> */}
                 <Alert.Description>{regCourseErr}</Alert.Description>
               </Alert.Content>
             </Alert.Root>
@@ -156,14 +156,17 @@ export default function StudentRegisterCourse() {
               {filteredCourses.length > 0 && (
                 <CheckboxGroup
                   value={selectedCourse}
-                  onValueChange={(detail) => setSelectedCourse(detail)}
+                  onValueChange={(detail) => {
+                    setSelectedCourse(detail)
+                    setRegCourseErr(undefined)
+                  }}
                 >
                   {Array.from(groupedCourses.keys()).map((semester) => (
                     <Box key={semester} mb={8}>
                       <Text fontSize="sm" color='fg.muted' mb={4} textTransform={"capitalize"}>
                         {semester} Semester
                       </Text>
-                      <SimpleGrid columns={[1, null, 3]} gap={4}>
+                      <SimpleGrid columns={[2, 3, 4]} gap={4}>
                         {groupedCourses.get(semester)?.map((course) => {
                           return (
                             <GridItem key={course.id} asChild>
@@ -171,7 +174,7 @@ export default function StudentRegisterCourse() {
                                 cursor={"pointer"}
                                 _hover={{ bg: "bg.subtle" }}
                                 rounded={"xl"}
-                                colorPalette={"orange"}
+                                colorPalette={"blue"}
                                 value={course.id}
                               >
                                 <CheckboxCard.HiddenInput />

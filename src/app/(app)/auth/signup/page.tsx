@@ -259,7 +259,7 @@ export default function Page() {
         <Button
           loading={isSubmitting}
           type="submit"
-          colorPalette={"orange"}
+          colorPalette={"blue"}
           rounded="full"
           mt={10}
         >

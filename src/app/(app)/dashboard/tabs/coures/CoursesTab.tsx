@@ -97,7 +97,7 @@ export default function CoursesTab({
                   >
                     {semester} Semester
                   </Text>
-                  <SimpleGrid columns={[2, null, 3]} gap={[2, null, 4]} mt={5}>
+                  <SimpleGrid columns={[2, 3, 4]} gap={[4]} mt={5}>
                     {groupedCourses.get(semester)?.map((course) => {
                       return (
                         <GridItem key={course.id} asChild>

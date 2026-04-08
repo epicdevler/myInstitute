@@ -1,6 +1,5 @@
 "use client";
 import { LogoText } from "@/app/components/LogoText";
-import LogoutButton from "@/app/components/LogoutButton";
 import MobileNavButton from "@/app/components/MobileNavMenu";
 import { ColorModeButton } from "@/app/components/ui/color-mode";
 import { Box, Button, ButtonGroup, Container, HStack } from "@chakra-ui/react";
@@ -32,7 +31,7 @@ export function Navbar({ isAdmin }: { isAdmin?: boolean }) {
           <ButtonGroup>
             <Button
               variant={pathname.endsWith("/carry-overs") ? "subtle" : "ghost"}
-              colorPalette={"orange"}
+              colorPalette={"blue"}
               rounded={"full"}
               asChild
               hidden={isAdmin}
@@ -42,7 +41,7 @@ export function Navbar({ isAdmin }: { isAdmin?: boolean }) {
             </Button>
             <Button
               variant={pathname.endsWith("/spill-overs") ? "subtle" : "ghost"}
-              colorPalette={"orange"}
+              colorPalette={"blue"}
               rounded={"full"}
               asChild
               hidden={isAdmin}
@@ -51,7 +50,7 @@ export function Navbar({ isAdmin }: { isAdmin?: boolean }) {
               <Link href="/spill-overs">Spill Overs</Link>
             </Button>
             <ColorModeButton hidden={false} rounded="full" variant="outline" />
-            <LogoutButton hideBelow={isAdmin ? "md" : undefined} />
+            {/* <LogoutButton  /> */}
             {!isAdmin && (
               <MobileNavButton pathname={pathname} isAdmin={isAdmin} />
             )}

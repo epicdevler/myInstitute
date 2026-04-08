@@ -14,8 +14,7 @@ export function LevelFilter({
       <Text>By Level</Text>
 
       <RadioCard.Root
-        mt={2}
-        colorPalette="orange"
+        colorPalette="blue"
         value={value}
         onValueChange={(detail) => {
           onSelect?.(detail.value || "");
@@ -31,9 +30,10 @@ export function LevelFilter({
               cursor={"pointer"}
               rounded={"full"}
               minW={"fit-content"}
+              
             >
               <RadioCard.ItemHiddenInput />
-              <RadioCard.ItemControl>
+              <RadioCard.ItemControl px={2} py={1}>
                 <RadioCard.ItemText minW={"14"} textAlign={"center"}>
                   {level}
                 </RadioCard.ItemText>

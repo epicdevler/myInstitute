@@ -107,7 +107,6 @@ export default function Page() {
       <Alert.Root hidden={!errors.submitError} status={"error"} mb={5}>
         <Alert.Indicator />
         <Alert.Content>
-          <Alert.Title>Login Failed</Alert.Title>
           <Alert.Description>{errors.submitError}</Alert.Description>
         </Alert.Content>
       </Alert.Root>
@@ -145,7 +144,7 @@ export default function Page() {
         <Button
           type="submit"
           loading={isSubmitting}
-          colorPalette={"orange"}
+          colorPalette={"blue"}
           rounded="full"
           mt={10}
         >
@@ -155,7 +154,7 @@ export default function Page() {
           I don&apos;t have an account{" "}
           <Span
             asChild
-            _hover={{ color: "orange" }}
+            _hover={{ color: "blue" }}
             textDecor={"underline"}
             textUnderlineOffset={3}
           >

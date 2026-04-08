@@ -6,32 +6,36 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
-    "@chakra-ui/react": "^3.19.1",
+    "@chakra-ui/react": "^3.34.0",
     "@emotion/react": "^11.14.0",
-    "@vercel/analytics": "^1.5.0",
-    "bcryptjs": "^3.0.2",
-    "cookies-next": "^6.1.0",
-    "firebase": "^12.1.0",
+    "@vercel/analytics": "^1.6.1",
+    "bcryptjs": "^3.0.3",
+    "cookies-next": "^6.1.1",
+    "firebase": "^12.11.0",
     "lucide-react": "^0.511.0",
-    "motion": "^12.12.1",
-    "next": "15.3.2",
+    "motion": "^12.38.0",
+    "next": "16.2.2",
     "next-themes": "^0.4.6",
-    "nextjs-toploader": "^3.8.16",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-icons": "^5.5.0"
+    "nextjs-toploader": "^3.9.17",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-icons": "^5.6.0"
   },
   "devDependencies": {
-    "@chakra-ui/cli": "^3.21.0",
-    "@eslint/eslintrc": "^3",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.3.2",
-    "typescript": "^5"
+    "@chakra-ui/cli": "^3.34.0",
+    "@types/node": "^20.19.39",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "16.2.2",
+    "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3"
   }
 }

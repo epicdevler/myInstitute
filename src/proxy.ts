@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { UserCookieHandler } from "./lib/utils/UserCookie";
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const cookieData = await UserCookieHandler.get(req).then((data) => data.data);
 
   const adminRoutes = ["/dashboard", "/departments", "/courses"];

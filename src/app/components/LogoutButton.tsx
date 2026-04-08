@@ -40,7 +40,7 @@ export default function LogoutButton({ hideBelow }: { hideBelow?: "md" }) {
   return (
     <>
       <Dialog.Root
-        placement={"top"}
+        placement={"center"}
         unmountOnExit
         closeOnEscape={!loggingOut}
         closeOnInteractOutside={!loggingOut}
@@ -53,9 +53,9 @@ export default function LogoutButton({ hideBelow }: { hideBelow?: "md" }) {
           </Button>
         </Dialog.Trigger>
         <Portal>
-          <Dialog.Backdrop />
-          <Dialog.Positioner p={4}>
-            <Dialog.Content>
+          <Dialog.Backdrop backdropFilter={"blur(10px)"} />
+          <Dialog.Positioner  p={4}>
+            <Dialog.Content rounded={"2xl"} >
               <Dialog.Header>
                 <Heading>Confirm Logout</Heading>
               </Dialog.Header>
@@ -78,7 +78,7 @@ export default function LogoutButton({ hideBelow }: { hideBelow?: "md" }) {
                     <Button
                       rounded="full"
                       variant="surface"
-                      colorPalette={"orange"}
+                      colorPalette={"blue"}
                     >
                       Cancel
                     </Button>
