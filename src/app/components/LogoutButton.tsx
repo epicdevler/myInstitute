@@ -11,8 +11,10 @@ import {
 import { LogOutIcon } from "lucide-react";
 import { use, useState } from "react";
 import { UserContext } from "../context/UserContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function LogoutButton({ hideBelow }: { hideBelow?: "md" }) {
+  const queryClient = useQueryClient();
   const { setLoggingOut } = use(UserContext);
 
   const [, /* logoutError */ setLogOutError] = useState<string>();
@@ -33,6 +35,8 @@ export default function LogoutButton({ hideBelow }: { hideBelow?: "md" }) {
       }
 
       location.replace("/");
+      queryClient.cancelQueries();
+      queryClient.clear();
     };
     invoke();
   };
@@ -54,8 +58,8 @@ export default function LogoutButton({ hideBelow }: { hideBelow?: "md" }) {
         </Dialog.Trigger>
         <Portal>
           <Dialog.Backdrop backdropFilter={"blur(10px)"} />
-          <Dialog.Positioner  p={4}>
-            <Dialog.Content rounded={"2xl"} >
+          <Dialog.Positioner p={4}>
+            <Dialog.Content rounded={"2xl"}>
               <Dialog.Header>
                 <Heading>Confirm Logout</Heading>
               </Dialog.Header>

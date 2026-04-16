@@ -5,15 +5,18 @@ import { HStack, Text, RadioCard } from "@chakra-ui/react";
 export function LevelFilter({
   value,
   onSelect,
+  disabled
 }: {
   value?: string;
   onSelect?: (level: string) => void;
+  disabled?: boolean,
 }) {
   return (
     <HStack>
       <Text>By Level</Text>
 
       <RadioCard.Root
+      disabled={disabled}
         colorPalette="blue"
         value={value}
         onValueChange={(detail) => {

@@ -16,7 +16,7 @@ export default function usePopNavLater() {
   };
 
   useEffect(() => {
-    scrollEvent();
+    // scrollEvent();
     window.addEventListener("scroll", scrollEvent);
   }, []);
 

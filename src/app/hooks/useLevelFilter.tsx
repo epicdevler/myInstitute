@@ -3,13 +3,13 @@ import { Course, LevelList } from "@/lib/models/Course";
 import React, { useCallback } from "react";
 
 
-export function useLevelFilter(courses: Course[]) {
+export function useLevelFilter(courses?: Course[]) {
   const [level, setLevel] = React.useState<string>(LevelList[0]);
 
   const filteredCourses = React.useMemo(() => {
     if (!level) return courses;
 
-    return courses.filter((course) => {
+    return courses?.filter((course) => {
       return course.level.replace("-", " ") === level;
     });
   }, [courses, level]);
@@ -19,7 +19,7 @@ export function useLevelFilter(courses: Course[]) {
   }, []);
 
   return {
-    filteredCourses,
+    filteredCourses: filteredCourses ?? [],
     level,
     onSelect,
   };

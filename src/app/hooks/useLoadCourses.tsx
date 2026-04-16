@@ -1,7 +1,6 @@
 "use client";
-import { Course } from "@/lib/models/Course";
 import { CourseRepository } from "@/lib/repositories/remote/CourseRepo";
-import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type FetchOption = {
   enabled: boolean;
@@ -9,42 +8,33 @@ export type FetchOption = {
   courseId?: string[];
 };
 
-export function useLoadCourses(options: FetchOption) {
-  const { enabled, departmentId, courseId } = options;
+const courseRepo = new CourseRepository();
 
-  const [isLoading, setLoading] = useState(true);
-  const [error, setError] = useState<string>();
-  const [retry, setRetry] = useState<number>(0);
-  const [courses, setCourses] = useState<Course[]>([]);
+export function useLoadCourses() {
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (!enabled) return;
+  const useRequest = ({ enabled, departmentId, courseId }: FetchOption) =>
+    useQuery({
+      enabled: enabled,
+      queryKey: ["courses", departmentId, courseId],
+      queryFn: async () => {
+        const response = await (courseId
+          ? courseRepo.getByCourseId(courseId)
+          : departmentId
+            ? courseRepo.getByDepartment(departmentId)
+            : courseRepo.getAll());
 
-    setLoading(true);
-    const invoke = async () => {
-      const courseRepo = new CourseRepository();
-      const response = courseId
-        ? await courseRepo.getByCourseId(courseId)
-        : departmentId
-          ? await courseRepo.getByDepartment(departmentId)
-          : await courseRepo.getAll();
+        if (!response.success) throw Error(response.message);
 
-      if (!response.success) {
-        setError(response.message);
-        setLoading(false);
-        return;
-      }
+        return response.data;
+      },
+    });
 
-      setCourses(response.data!);
-      setLoading(false);
-    };
-    invoke();
-  }, [enabled, departmentId, retry, courseId]);
+  const invalidate = () =>
+    queryClient.invalidateQueries({ queryKey: ["courses"] });
 
   return {
-    isLoading,
-    error,
-    courses,
-    onRetry: () => setRetry((prev) => prev + 1),
+    query: useRequest,
+    invalidate,
   };
 }

@@ -1,13 +1,10 @@
-import { Box, Heading, HStack, Image, Text } from "@chakra-ui/react";
+import { Heading, HStack, Image, StackProps } from "@chakra-ui/react";
 
-export function LogoText() {
+export function LogoText(props: StackProps) {
   return (
-    <HStack>
-      <Image src="/assets/pti_logo.png" width={'14'} alt="" />
-      <Box lineHeight={'short'}>
-        <Text fontSize={"sm"}>PTI</Text>
-        <Heading size={'md'}>Computer Eng. Tech</Heading>
-      </Box>
+    <HStack {...props}>
+      <Image src="/assets/pti_logo.png" width={'14'} alt="" />      
+        <Heading>PTI</Heading>      
     </HStack>
   );
 }

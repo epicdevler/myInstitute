@@ -100,7 +100,7 @@ export default function Page() {
 
   return (
     <>
-    <LogoText />
+    <LogoText justifyContent={"center"} />
       
         <Text my={8} fontSize={"xl"} textAlign={'center'} w='full'>Welcome back</Text>        
       

@@ -16,17 +16,16 @@ import {
   Select,
   Spinner,
   Text,
-  VStack
+  VStack,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "nextjs-toploader/app";
 import {
   ChangeEvent,
-  FormEvent,
   SubmitEventHandler,
   useMemo,
   useState,
-  useTransition,
+  useTransition
 } from "react";
 import { commonProps } from "./commonProps";
 
@@ -59,7 +58,7 @@ export default function Page() {
 
   const [errors, setErrors] = useState<LoginFieldErrors>({});
 
-  const handleSubmit: SubmitEventHandler<HTMLDivElement> = event => {
+  const handleSubmit: SubmitEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
     setErrors((prev) => ({
       ...prev,
@@ -77,7 +76,9 @@ export default function Page() {
         email: values.email,
         password: values.password,
         role: "student",
-        registeredCourses: [],
+        student: {
+          status: "pending",
+        },
       });
 
       if (!userResponse.success) {
@@ -123,11 +124,15 @@ export default function Page() {
     }));
   };
 
-  const { isLoading, loadingError, departments } = useLoadDepartments();
+  const {
+    isLoading,
+    error: loadingError,
+    data: departments,
+  } = useLoadDepartments().query();
 
   const collection = useMemo(() => {
     return createListCollection({
-      items: departments,
+      items: departments ?? [],
       itemToString: (department) => department.name + " " + department.code,
       itemToValue: (department) => department.id,
     });
@@ -136,9 +141,10 @@ export default function Page() {
   return (
     <>
       <LogoText />
-      
-        <Text my={8} fontSize={"xl"} textAlign={'center'} w='full'>Sign Up</Text>        
-      
+
+      <Text my={8} fontSize={"xl"} textAlign={"center"} w="full">
+        Sign Up
+      </Text>
 
       <Alert.Root hidden={!errors.submitError} status={"error"} mb={5}>
         <Alert.Indicator />
@@ -184,7 +190,7 @@ export default function Page() {
           invalid={
             loadingError != undefined || errors.departmentId != undefined
           }
-          errorText={loadingError || errors.departmentId}
+          errorText={loadingError?.message || errors.departmentId}
         >
           <InputGroup endElement={isLoading ? <Spinner /> : undefined}>
             <Select.Root

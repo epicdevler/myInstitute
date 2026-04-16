@@ -35,7 +35,7 @@ export async function proxy(req: NextRequest) {
 
   if (cookieData && pathname == "/") {
     const { userType } = cookieData;
-    const nextValidRoute = userType === "admin" ? "/dashboard" : "/student";
+    const nextValidRoute = userType !== "student" ? "/dashboard" : "/student";
     return NextResponse.rewrite(new URL(nextValidRoute, req.url));
   }
   // Later, we can also fetch user role here for role-based redirect

@@ -1,35 +1,30 @@
 "use client";
-import { User } from "@/lib/models/User";
-import { StudentRepository } from "@/lib/repositories/remote/StudentsRepo";
-import React from "react";
+import { UserRole } from "@/lib/models/User";
+import {
+  UserFilterOptions,
+  UserRepository,
+} from "@/lib/repositories/remote/UserRepo";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
+const userRepoImpl = new UserRepository();
 
-export function useLoadStudents(departmentId?: string) {
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [loadingError, setLoadingError] = React.useState<string | undefined>();
-  const [students, setStudents] = React.useState<User[]>([]);
+export function useLoadStudents() {
+  const queryClient = useQueryClient();
 
-  React.useEffect(() => {
-    setIsLoading(true);
-    setLoadingError(undefined);
+  const invalidate = (/* role: UserRole */) =>
+    queryClient.invalidateQueries({ queryKey: ["users"] });
 
-    const request = !departmentId
-      ? StudentRepository.getAllStudents()
-      : StudentRepository.getAllByDepartment(departmentId);
+  const useRequest = (filter: UserFilterOptions) =>
+    useQuery({
+      queryKey: ["users", filter.role, filter.userId, filter.departmentId],
+      queryFn: () => userRepoImpl.getUsers(filter).then(res => {
+        if(!res.success) throw Error(res.message)
 
-    request.then((res) => {
-      if (res.success && res.data) {
-        setStudents(res.data);
-      } else {
-        setLoadingError(res.message || "Failed to load students");
-      }
-      setIsLoading(false);
+          return res.data
+      }),
     });
-  }, [departmentId]);
-
   return {
-    isLoading,
-    loadingError,
-    students,
+    invalidate,
+    query: useRequest
   };
 }

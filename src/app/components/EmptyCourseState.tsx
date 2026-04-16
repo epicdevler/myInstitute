@@ -8,11 +8,13 @@ export function EmptyState({
   description,
   actionLabel,
   actionRedirect,
+  onAction,
 }: {
   title?: string;
   description?: string;
   actionLabel?: string;
   actionRedirect?: string;
+  onAction?: () => void;
 }) {
   return (
     <ChakraEmptyState.Root>
@@ -26,9 +28,21 @@ export function EmptyState({
         <ChakraEmptyState.Description>
           {description}
         </ChakraEmptyState.Description>
-        <Button asChild mt={4} rounded="full" variant={"outline"}>
-          <Link href={actionRedirect ?? "#"}>{actionLabel}</Link>
-        </Button>
+        {onAction && (
+          <Button
+            onClick={onAction}
+            asChild={!!actionRedirect}
+            mt={4}
+            rounded="full"
+            variant={"outline"}
+          >
+            {actionRedirect ? (
+              <Link href={actionRedirect}>{actionLabel}</Link>
+            ) : (
+              actionLabel
+            )}
+          </Button>
+        )}
       </ChakraEmptyState.Content>
     </ChakraEmptyState.Root>
   );

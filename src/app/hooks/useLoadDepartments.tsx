@@ -1,37 +1,23 @@
 "use client";
-import { Department } from "@/lib/models/Department";
 import { DepartmentRepository } from "@/lib/repositories/remote/DepartmentRepo";
-import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useLoadDepartments() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadingError, setLoadingError] = useState<string>();
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [retry, setRetry] = useState(0);
+  const client = useQueryClient()
 
-  useEffect(() => {
-    const invoke = async () => {
-      setLoadingError(undefined);
 
-      const response = await new DepartmentRepository().getAll();
+  const useRequest = () => useQuery({
+    queryKey: ["departments"],
+    queryFn: () => new DepartmentRepository().getAll().then(res => {
+      if(!res.success) throw Error(res.message)
 
-      if (!response.success) {
-        setLoadingError(response.message);
-        setIsLoading(false);
-        return;
-      }
+        return res.data
+    })
+  })
 
-      setDepartments(response.data!);
-      setIsLoading(false);
-    };
+  const invalidate = () => client.invalidateQueries({queryKey: ["departments"]})
 
-    invoke();
-  }, [retry]);
+ 
 
-  return {
-    isLoading,
-    loadingError,
-    departments,
-    retry: () => setRetry((prev) => prev + 1),
-  };
+  return {query: useRequest, invalidate};
 }

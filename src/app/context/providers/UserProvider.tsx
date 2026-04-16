@@ -72,9 +72,9 @@ export default function UserProvider({ children }: { children: ReactNode }) {
         },
       }}
     >
-      <Center>
+      <Center flexDir={"column"}>
         {isUserLoading && (
-          <Center p={4}>
+          <Center minH="dvh" p={4}>
             <Spinner />
           </Center>
         )}

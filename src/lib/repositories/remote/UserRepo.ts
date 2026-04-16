@@ -12,27 +12,38 @@ import {
 import {
   collection,
   doc,
+  documentId,
   getDoc,
+  getDocs,
   onSnapshot,
+  query,
+  QueryConstraint,
   runTransaction,
   serverTimestamp,
   setDoc,
   Timestamp,
+  where,
 } from "firebase/firestore";
-import { User } from "../../models/User";
+import { User, UserRole } from "../../models/User";
 import { firebaseAuth, firestoreDB } from "./config";
 
 export const userCollection = collection(firestoreDB, "users");
 
+export type UserFilterOptions = {
+  userId?: string;
+  role?: UserRole[];
+  departmentId?: string[];
+};
+
 export class UserRepository {
   async signup(
-    details: Omit<User, "id" | "createAt">
+    details: Omit<User, "id" | "createAt">,
   ): Promise<DBResponse<User>> {
     try {
       const { user } = await createUserWithEmailAndPassword(
         firebaseAuth,
         details.email,
-        details.password
+        details.password,
       );
 
       await updateProfile(user!, {
@@ -49,6 +60,7 @@ export class UserRepository {
 
       const userDoc = doc(userCollection, user.uid);
       await setDoc(userDoc, newUser);
+
       return await this.logout();
     } catch (error) {
       await this.logout();
@@ -59,12 +71,54 @@ export class UserRepository {
     }
   }
 
+  async createUser(
+    details: Omit<User, "id" | "createAt">,
+  ): Promise<DBResponse<never>> {
+    throw Error("Not implemented");
+    // try {
+    //   const firebaseAuthAdmin = (
+    //     await import("@/lib/repositories/remote/config.server")
+    //   ).firebaseAuth;
+    //   const record = await firebaseAuthAdmin.createUser({
+    //     email: details.email,
+    //     password: details.password,
+    //     phoneNumber: details.phone,
+    //     displayName:
+    //       `${details?.staff?.title ?? ""} ${details.lastName}`.trim(),
+    //   });
+
+    //   const firestoreDBAdmin = (
+    //     await import("@/lib/repositories/remote/config.server")
+    //   ).firestoreDB;
+
+    //   const passwordHash = await bcrypt.hash(details.password, 10);
+
+    //   const newUser = {
+    //     ...details,
+    //     password: passwordHash,
+    //     createAt: serverTimestamp(),
+    //   };
+
+    //   await firestoreDBAdmin
+    //     .collection(userCollection.path)
+    //     .doc(record.uid)
+    //     .set(newUser);
+
+    //   return { success: true };
+    // } catch (error) {
+    //   return {
+    //     success: false,
+    //     message: handleAuthError(error),
+    //   };
+    // }
+  }
+
   async login(email: string, password: string): Promise<DBResponse<User>> {
     try {
       const { user } = await signInWithEmailAndPassword(
         firebaseAuth,
         email,
-        password
+        password,
       );
       const userSnapshot = await getDoc(doc(userCollection, user!.uid));
 
@@ -130,7 +184,7 @@ export class UserRepository {
 
   async getProfileObserve(
     userId: string,
-    callback: (response: DBResponse<User>) => void
+    callback: (response: DBResponse<User>) => void,
   ): Promise<() => void> {
     const userDoc = doc(userCollection, userId);
     return onSnapshot(userDoc, (snapshot) => {
@@ -157,7 +211,7 @@ export class UserRepository {
   async registerCourses(
     userId: string,
     courseIds: string[],
-    type?: "CarryOver" | "SpilledOver" | "Normal"
+    type?: "CarryOver" | "SpilledOver" | "Normal",
   ): Promise<DBResponse<undefined>> {
     return runTransaction(firestoreDB, async (transaction) => {
       try {
@@ -218,4 +272,43 @@ export class UserRepository {
       }
     });
   }
+
+  async getUsers(filter: UserFilterOptions): Promise<DBResponse<User[]>> {
+    try {
+      const { role, userId, departmentId } = filter;
+      const constraints: QueryConstraint[] = [];
+
+      if (role) constraints.push(where("role", "in", role));
+      if (userId) constraints.push(where(documentId(), "==", userId));
+      if (departmentId && departmentId.length > 0)
+        constraints.push(where("departmentId", "in", departmentId));
+
+      const students = await getDocs(
+        query(userCollection, ...constraints),
+      ).then((snapshot) => {
+        return snapshot.docs.map((doc) => {
+          const data = doc.data();
+
+          
+          return {
+            id: doc.id,
+            ...(data as Omit<User, "id" | "createdAt" | "updatedAt">),
+            createAt: (data.createAt as Timestamp).toDate(),
+          };
+        });
+      });
+
+      return {
+        success: true,
+        data: students,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: handleAuthError(error),
+      };
+    }
+  }
+
+
 }
