@@ -19,8 +19,10 @@ import MembersLoadingIndicator from "./components/members-loading-indicator";
 
 export default function StaffTab({ departmentId }: { departmentId?: string }) {
   const user = use(UserContext).user;
+const userId =user.id
 
   const isStaff = user?.role == "staff";
+const isAdmin = user?.role == "admin";
 
   const departId = departmentId ?? (isStaff ? user?.departmentId : undefined);
 
@@ -44,7 +46,7 @@ export default function StaffTab({ departmentId }: { departmentId?: string }) {
             onClick={() => toggleOpenAddDialog()}
             variant={"outline"}
             rounded="full"
-hidden={user?.role != "admin"}
+hidden={isAdmin}
           >
             <UserPlus2 /> Add
           </Button>
@@ -76,7 +78,8 @@ hidden={user?.role != "admin"}
                     sn={index + 1}
                     key={user.id}
                     staff={user}
-                    isSelf={user?.id == user.id}
+                    isSelf={userId == user.id}
+isAdmin={isAdmin}
                     onSelect={() => {
                       /* handleUserSelect(student.id) */
                     }}
