@@ -19,7 +19,7 @@ import MembersLoadingIndicator from "./components/members-loading-indicator";
 
 export default function StaffTab({ departmentId }: { departmentId?: string }) {
   const user = use(UserContext).user;
-const userId =user.id
+const userId =user?.id
 
   const isStaff = user?.role == "staff";
 const isAdmin = user?.role == "admin";
