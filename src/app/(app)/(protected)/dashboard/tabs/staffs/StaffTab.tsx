@@ -44,6 +44,7 @@ export default function StaffTab({ departmentId }: { departmentId?: string }) {
             onClick={() => toggleOpenAddDialog()}
             variant={"outline"}
             rounded="full"
+hidden={user?.role != "admin"}
           >
             <UserPlus2 /> Add
           </Button>
