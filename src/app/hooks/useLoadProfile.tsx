@@ -1,22 +1,22 @@
 "use client";
 import {
-  UserFilterOptions,
-  UserRepository,
+  UserRepository
 } from "@/lib/repositories/remote/UserRepo";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const userRepoImpl = new UserRepository();
 
-export function useLoadStudents() {
+export function useLoadProfile() {
   const queryClient = useQueryClient();
 
   const invalidate = (/* role: UserRole */) =>
-    queryClient.invalidateQueries({ queryKey: ["users"] });
+    queryClient.invalidateQueries({ queryKey: ["profile"] });
 
-  const useRequest = (filter: UserFilterOptions) =>
+  const useRequest = (userId?: string) =>
     useQuery({
-      queryKey: ["users", filter.role, filter.userId, filter.departmentId],
-      queryFn: () => userRepoImpl.getUsers(filter).then(res => {
+      enabled: !!userId,
+      queryKey: ["profile", userId],
+      queryFn: () => userRepoImpl.getProfile(userId!).then(res => {
         if(!res.success) throw Error(res.message)
 
           return res.data

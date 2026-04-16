@@ -1,36 +1,29 @@
 "use client";
 import { UserContext } from "@/app/context/UserContext";
-import {
-  Box,
-  Button,
-  GridItem,
-  Heading,
-  HStack,
-  Separator,
-  SimpleGrid,
-  Spinner,
-  Text,
-} from "@chakra-ui/react";
-import { PlusIcon } from "lucide-react";
-import Link from "next/link";
+import { Heading, Text } from "@chakra-ui/react";
+import dynamic from "next/dynamic";
 import { use } from "react";
-import { CourseItem } from "./CourseItem";
-import { EmptyCourseState } from "./EmptyCourseState";
-import { useLoadCourses } from "../../../../hooks/useLoadCourses";
-import { ErrorState } from "@/app/components/ErrorState";
-import { LevelFilter } from "../../../../components/LevelFilter";
-import { useLevelFilter } from "../../../../hooks/useLevelFilter";
-import useGroupCourse from "@/app/hooks/useGroupCourse";
+
+const StudentCourses = dynamic(() => import("./components/courses"), {
+  ssr: false,
+});
+const VerificationPending = dynamic(
+  () => import("./components/verification-pending"),
+  { ssr: false },
+);
+const VerificationDeclined = dynamic(
+  () => import("./components/verification-declined"),
+  { ssr: false },
+);
 
 export default function StudentHomePage() {
   const { user } = use(UserContext);
 
-  const { isLoading, data: courses, error } = useLoadCourses().query({
-    enabled: true,
-    courseId: user?.registeredCourses ?? [],
-  });
-  const { filteredCourses, level, onSelect } = useLevelFilter(courses);
-  const groupedCourses = useGroupCourse(filteredCourses);
+  const verificationStatus = {
+    approved: user?.student?.status == "approved",
+    declined: user?.student?.status == "declined",
+    pending: !user?.student?.status || user?.student?.status == "pending",
+  };
 
   return (
     <>
@@ -41,59 +34,11 @@ export default function StudentHomePage() {
         Petroleom Training Institute, {user?.departmentId}
       </Text>
 
-      <HStack justify={"space-between"} my={4} py={2}>
-        <Text fontWeight={"semibold"}>Your Registered Courses</Text>
-        <Button
-          hidden={!courses || courses.length < 1}
-          asChild
-          variant={"outline"}
-          rounded="full"
-        >
-          <Link href="/register-course">
-            <PlusIcon /> Edit or Add
-          </Link>
-        </Button>
-      </HStack>
+      {verificationStatus.approved && <StudentCourses />}
 
-      <LevelFilter onSelect={onSelect} value={level} />
+      {verificationStatus.declined && <VerificationDeclined />}
 
-      {isLoading && (
-        <Box p={6}>
-          <Spinner />
-        </Box>
-      )}
-
-      {!isLoading && error && (
-        <ErrorState title="Failed to load courses" message={error.message} />
-      )}
-
-      {!isLoading && !error && (
-        <>
-          {filteredCourses.length > 0 && (
-            <Box>
-              <Separator my={4} />
-              {Array.from(groupedCourses.keys()).map((semester) => (
-                <Box key={semester} mb={8}>
-                  <Heading size="md" mb={4} textTransform={"capitalize"}>
-                    {semester} Semester
-                  </Heading>
-                  <SimpleGrid columns={[2, 3, 4]} gap={4} mb={20}>
-                    {groupedCourses.get(semester)?.map((course) => {
-                      return (
-                        <GridItem key={course.id} asChild>
-                          <CourseItem course={course} />
-                        </GridItem>
-                      );
-                    })}
-                  </SimpleGrid>
-                </Box>
-              ))}
-            </Box>
-          )}
-
-          {filteredCourses.length < 1 && <EmptyCourseState />}
-        </>
-      )}
+      {verificationStatus.pending && <VerificationPending />}
 
       {/* <EmptyCourseState /> */}
     </>

@@ -1,6 +1,6 @@
 "use client";
+import { useLoadProfile } from "@/app/hooks/useLoadProfile";
 import { firebaseAuth } from "@/lib/repositories/remote/config";
-import { UserRepository } from "@/lib/repositories/remote/UserRepo";
 import { Center, Spinner } from "@chakra-ui/react";
 import { onAuthStateChanged } from "firebase/auth";
 import { ReactNode, useEffect, useState } from "react";
@@ -9,83 +9,58 @@ import { UserContextUser } from "../UserContextType";
 import { UserErrorState } from "./UserErrorState";
 
 export default function UserProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserContextUser>();
-  // const [tempUser, setTempUser] = useState<UserContextUser>();
+  const [authId, setAuthId] = useState<string>();
+
+  const {
+    isLoading: isUserLoading,
+    error: profileError,
+    refetch,
+    data: profile,
+  } = useLoadProfile().query(authId);
+
   const [userLoadingError, setUserLoadError] = useState<string>();
-  const [isUserLoading, setUserLoading] = useState(true);
-  const [retry, setRetry] = useState(0);
+
+  const error = userLoadingError || profileError?.message;
+
+  const isLoading = (!authId && !error) || isUserLoading;
 
   useEffect(() => {
-    if (user && retry == 0) return;
-
     const unsub = async () => {
-      setUserLoading(true);
       return onAuthStateChanged(
         firebaseAuth,
         async (user) => {
           if (user) {
-            return await new UserRepository().getProfileObserve(
-              user.uid,
-              (userResponse) => {
-                if (!userResponse.success) {
-                  setUserLoadError(userResponse.message);
-                  setUserLoading(false);
-                  return;
-                }
-                setUser(userResponse.data as UserContextUser);
-                setUserLoading(false);
-                setRetry(0);
-              }
-            );
+            setAuthId(user.uid);
           }
         },
         /* onError = */ (error) => {
           setUserLoadError(error.message);
-          setUserLoading(false);
-        }
+        },
       );
-
-      // return;
-      // const userResponse = await new UserRepository().getProfile();
-
-      // if (!userResponse.success) {
-      //   setUserLoadError(userResponse.message);
-      //   setUserLoading(false);
-      //   return;
-      // }
-
-      // setUser(userResponse.data as UserContextUser);
-      // setUserLoading(false);
-      // setRetry(0);
     };
 
     unsub();
-  }, [user, retry]);
+  }, []);
 
   return (
     <UserContext.Provider
       value={{
-        user,
+        user: profile ? (profile as UserContextUser) : undefined,
         isLogginOut: false,
-        setLoggingOut: () => {
-          setRetry((prev) => prev + 1);
-        },
+        setLoggingOut: () => refetch(),
       }}
     >
       <Center flexDir={"column"}>
-        {isUserLoading && (
+        {isLoading && (
           <Center minH="dvh" p={4}>
             <Spinner />
           </Center>
         )}
 
-        {!isUserLoading && userLoadingError && (
-          <UserErrorState
-            message={userLoadingError!}
-            onRetry={() => setRetry((prev) => prev + 1)}
-          />
+        {!isUserLoading && error && (
+          <UserErrorState message={error} onRetry={() => refetch()} />
         )}
-        {!isUserLoading && user && children}
+        {!isUserLoading && profile && children}
       </Center>
     </UserContext.Provider>
   );

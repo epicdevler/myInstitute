@@ -15,9 +15,11 @@ import LogoutButton from "./LogoutButton";
 export default function MobileNavButton({
   pathname,
   isAdmin,
+  isStudentVerified,
 }: {
   pathname: string;
   isAdmin?: boolean;
+  isStudentVerified?: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -57,7 +59,7 @@ export default function MobileNavButton({
                     colorPalette={"blue"}
                     rounded={"full"}
                     asChild
-                    hidden={isAdmin}
+                    hidden={isAdmin || !isStudentVerified}
                     w="full"
                   >
                     <Link href="/carry-overs">Carry Overs</Link>
@@ -70,7 +72,7 @@ export default function MobileNavButton({
                     colorPalette={"blue"}
                     rounded={"full"}
                     asChild
-                    hidden={isAdmin}
+                    hidden={isAdmin || !isStudentVerified}
                     w="full"
                   >
                     <Link href="/spill-overs">Spill Overs</Link>

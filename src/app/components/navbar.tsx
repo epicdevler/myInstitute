@@ -10,8 +10,10 @@ import { ColorModeButton } from "./ui/color-mode";
 import { usePathname } from "next/navigation";
 
 export function Navbar() {
+  const user = use(UserContext).user;
   const pathname = usePathname();
-  const isAdmin = use(UserContext).user?.role != "student";
+  const isAdmin = user?.role != "student";
+  const isStudentVerified = !isAdmin && user.student?.status == "approved";
 
   return (
     <Box as="nav" borderBottomWidth={"thin"}>
@@ -26,7 +28,7 @@ export function Navbar() {
               colorPalette={"blue"}
               rounded={"full"}
               asChild
-              hidden={isAdmin}
+              hidden={isAdmin || !isStudentVerified}
               hideBelow={"md"}
             >
               <Link href="/carry-overs">Carry Overs</Link>
@@ -36,7 +38,7 @@ export function Navbar() {
               colorPalette={"blue"}
               rounded={"full"}
               asChild
-              hidden={isAdmin}
+              hidden={isAdmin || !isStudentVerified}
               hideBelow={"md"}
             >
               <Link href="/spill-overs">Spill Overs</Link>
@@ -44,7 +46,11 @@ export function Navbar() {
             <ColorModeButton hidden={false} rounded="full" variant="outline" />
             <LogoutButton />
             {!isAdmin && (
-              <MobileNavButton pathname={pathname} isAdmin={isAdmin} />
+              <MobileNavButton
+                pathname={pathname}
+                isAdmin={isAdmin}
+                isStudentVerified={isStudentVerified}
+              />
             )}
           </ButtonGroup>
         </HStack>
