@@ -28,10 +28,12 @@ export function StaffItem({
   staff,
   onSelect,
   isSelf,
+isAdmin,
 }: {
   sn: number;
   staff: User;
-  isSelf: boolean;
+  isSelf: boolean,
+isAdmin: boolean,
   onSelect: () => void;
 }) {
   const displayName = `${staff.staff?.title ?? staff.firstName} ${staff.lastName}`;
@@ -96,7 +98,7 @@ export function StaffItem({
         </Box>
         <Menu.Root onSelect={handleMenuSelect}>
           <Menu.Trigger asChild>
-            <IconButton variant="ghost" rounded="full">
+            <IconButton hidden={!isAdmin} variant="ghost" rounded="full">
               <MoreVerticalIcon />
             </IconButton>
           </Menu.Trigger>
