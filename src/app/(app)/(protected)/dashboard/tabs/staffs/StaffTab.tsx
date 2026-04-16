@@ -46,7 +46,7 @@ const isAdmin = user?.role == "admin";
             onClick={() => toggleOpenAddDialog()}
             variant={"outline"}
             rounded="full"
-hidden={isAdmin}
+hidden={!isAdmin}
           >
             <UserPlus2 /> Add
           </Button>
