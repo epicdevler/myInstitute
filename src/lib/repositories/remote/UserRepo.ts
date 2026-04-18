@@ -164,9 +164,11 @@ export class UserRepository {
       if (snapshot.exists() == false) throw new Error("User profile not found");
 
       const data = snapshot.data();
+
       const user: User = {
         id: snapshot.id,
         ...(data as Omit<User, "id" | "createAt">),
+        role: transfromRole(data.role),
         createAt: (data.createAt as Timestamp).toDate(),
       };
 
@@ -195,10 +197,13 @@ export class UserRepository {
         });
         return;
       }
+      const data = snapshot.data();
 
       const user: User = {
         id: snapshot.id,
-        ...(snapshot.data() as Omit<User, "id">),
+        ...(data as Omit<User, "id" | "role">),
+        role: transfromRole(data.role),
+        createAt: (data.createAt as Timestamp).toDate(),
       };
 
       callback({
@@ -284,12 +289,15 @@ export class UserRepository {
         constraints.push(where("departmentId", "in", departmentId));
 
       const students = await getDocs(
-        query(userCollection, ...constraints),
+        query(
+          userCollection,
+          ...constraints,
+          where("role", "!=", process.env.NEXT_PUBLIC_SUPERADMIN_KEY),
+        ),
       ).then((snapshot) => {
         return snapshot.docs.map((doc) => {
           const data = doc.data();
 
-          
           return {
             id: doc.id,
             ...(data as Omit<User, "id" | "createdAt" | "updatedAt">),
@@ -309,6 +317,9 @@ export class UserRepository {
       };
     }
   }
-
-
+}
+function transfromRole(role: string): UserRole {
+  return role == process.env.NEXT_PUBLIC_SUPERADMIN_KEY
+    ? ("admin" as UserRole)
+    : (role as UserRole);
 }

@@ -1,28 +1,29 @@
 "use client";
 import { ErrorState } from "@/app/components/ErrorState";
+import { UserContext } from "@/app/context/UserContext";
 import { useLoadStudents } from "@/app/hooks/useLoadStudents";
 import {
   Box,
   Button,
   Heading,
   HStack,
-  Spinner,
-  VStack,
+  SegmentGroup,
+  VStack
 } from "@chakra-ui/react";
 import { UserPlus2 } from "lucide-react";
 import { use, useState } from "react";
 import EmptyState from "../../../../../components/EmptyState";
+import MembersLoadingIndicator from "./components/members-loading-indicator";
 import AddStaffDialog from "./dialog/create-staff-dialog";
 import { StaffItem } from "./staff-item";
-import { UserContext } from "@/app/context/UserContext";
-import MembersLoadingIndicator from "./components/members-loading-indicator";
 
 export default function StaffTab({ departmentId }: { departmentId?: string }) {
   const user = use(UserContext).user;
-const userId =user?.id
+  const userId = user?.id;
 
-  const isStaff = user?.role == "staff";
-const isAdmin = user?.role == "admin";
+  
+  const isStaff = user?.role?.trim() === "staff";
+  const isAdmin = user?.role?.trim() === "admin";
 
   const departId = departmentId ?? (isStaff ? user?.departmentId : undefined);
 
@@ -37,24 +38,51 @@ const isAdmin = user?.role == "admin";
   const [openAddDialog, setOpenAddDialog] = useState(false);
 
   const toggleOpenAddDialog = () => setOpenAddDialog((prev) => !prev);
+
+  const [filterByRole, setFilterByRole] = useState<string>("staff");
+
+
+  const filteredMembers = staffs?.filter(pred => pred.role == filterByRole)
+
   return (
     <>
       <Box>
         <HStack justifyContent={"space-between"} py={5}>
           <Heading>Members</Heading>
+
+         <HStack gap={4}>
+           <SegmentGroup.Root
+            rounded={"md"}
+            size="sm"
+            hidden={!isAdmin}
+            mdDown={{ flex: 1, w: "fit" }}
+            value={filterByRole}
+            disabled={isLoading}
+            onValueChange={({ value }) => !!value && setFilterByRole(value)}
+          >
+            <SegmentGroup.Indicator rounded={"md"} />
+            <SegmentGroup.Item value="staff">
+              <SegmentGroup.ItemHiddenInput />
+              <SegmentGroup.ItemText>Staff</SegmentGroup.ItemText>
+            </SegmentGroup.Item>
+            <SegmentGroup.Item value="admin">
+              <SegmentGroup.ItemHiddenInput />
+              <SegmentGroup.ItemText>Admin</SegmentGroup.ItemText>
+            </SegmentGroup.Item>
+          </SegmentGroup.Root>
           <Button
             onClick={() => toggleOpenAddDialog()}
             variant={"outline"}
             rounded="full"
-hidden={!isAdmin}
+            hidden={!isAdmin}
           >
             <UserPlus2 /> Add
           </Button>
+         </HStack>
         </HStack>
       </Box>
 
-      {isLoading && (<MembersLoadingIndicator />
-      )}
+      {isLoading && <MembersLoadingIndicator />}
 
       {!isLoading && loadingError && (
         <ErrorState
@@ -65,21 +93,21 @@ hidden={!isAdmin}
 
       {!isLoading && !loadingError && (
         <>
-          {!staffs || staffs?.length < 1 ? (
+          {!filteredMembers || filteredMembers?.length < 1 ? (
             <EmptyState
               title={"No Course found"}
               message={"Add courses to see them here..."}
             />
           ) : (
             <VStack align="stretch" cursor={"pointer"}>
-              {staffs.map((user, index) => {
+              {filteredMembers.map((user, index) => {
                 return (
                   <StaffItem
                     sn={index + 1}
                     key={user.id}
                     staff={user}
                     isSelf={userId == user.id}
-isAdmin={isAdmin}
+                    isAdmin={isAdmin}
                     onSelect={() => {
                       /* handleUserSelect(student.id) */
                     }}
