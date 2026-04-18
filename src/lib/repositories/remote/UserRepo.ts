@@ -158,7 +158,9 @@ export class UserRepository {
   }
 
   async getProfile(userId: string): Promise<DBResponse<User>> {
+
     try {
+
       const snapshot = await getDoc(doc(userCollection, userId));
 
       if (snapshot.exists() == false) throw new Error("User profile not found");
@@ -176,6 +178,7 @@ export class UserRepository {
         success: true,
         data: user,
       };
+      
     } catch (error) {
       return {
         success: false,
