@@ -1,6 +1,6 @@
 "use client";
 import { UserContext } from "@/app/context/UserContext";
-import { Heading, Tabs } from "@chakra-ui/react";
+import { Box, Text, Heading, Tabs } from "@chakra-ui/react";
 import { use } from "react";
 import { LuFolder, LuNotebookPen, LuUser } from "react-icons/lu";
 import CoursesTab from "./tabs/coures/CoursesTab";
@@ -52,15 +52,20 @@ export default function Home() {
   const displayName = `${user?.staff?.title ?? user?.firstName} ${user?.lastName}`;
   return (
     <>
-      <Heading mt={10} size="3xl">
-        Hello, {displayName}
-      </Heading>
+      <Box>
+        <Heading mt={10} size="2xl">
+          Hello, {displayName}
+        </Heading>
+        <Text color="fg.muted" textTransform={"capitalize"}>
+          {user?.role}
+        </Text>
+      </Box>
 
       <Tabs.Root
         lazyMount
         w="full"
         variant={"outline"}
-        my={20}
+        my={10}
         defaultValue={tabItems[0].key}
       >
         <Tabs.List>
