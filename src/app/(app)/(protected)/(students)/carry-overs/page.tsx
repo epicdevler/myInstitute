@@ -1,4 +1,5 @@
 "use client";
+import { EmptyState } from "@/app/components/EmptyCourseState";
 import { ErrorState } from "@/app/components/ErrorState";
 import { UserContext } from "@/app/context/UserContext";
 import useGroupCourse from "@/app/hooks/useGroupCourse";
@@ -10,8 +11,7 @@ import {
   HStack,
   Separator,
   SimpleGrid,
-  Text,
-  Spinner,
+  Text
 } from "@chakra-ui/react";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
@@ -19,8 +19,8 @@ import { use } from "react";
 import { LevelFilter } from "../../../../components/LevelFilter";
 import { useLevelFilter } from "../../../../hooks/useLevelFilter";
 import { useLoadCourses } from "../../../../hooks/useLoadCourses";
+import CourseLoadingIndicator from "../../dashboard/tabs/coures/components/course-loading-indicator";
 import { CourseItem } from "../student/CourseItem";
-import { EmptyState } from "@/app/components/EmptyCourseState";
 
 export default function CarryOverPage() {
   const { user } = use(UserContext);
@@ -52,10 +52,7 @@ export default function CarryOverPage() {
 
       <LevelFilter onSelect={onSelect} value={level} />
 
-      {isLoading && (
-        <Box p={6}>
-          <Spinner />
-        </Box>
+      {isLoading && (<CourseLoadingIndicator />
       )}
 
       {!isLoading && error && (

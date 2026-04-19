@@ -1,4 +1,5 @@
 "use client";
+import { EmptyState } from "@/app/components/EmptyCourseState";
 import { ErrorState } from "@/app/components/ErrorState";
 import { UserContext } from "@/app/context/UserContext";
 import useGroupCourse from "@/app/hooks/useGroupCourse";
@@ -6,12 +7,11 @@ import {
   Box,
   Button,
   GridItem,
-  Text,
   Heading,
   HStack,
   Separator,
   SimpleGrid,
-  Spinner,
+  Text
 } from "@chakra-ui/react";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
@@ -19,13 +19,17 @@ import { use } from "react";
 import { LevelFilter } from "../../../../components/LevelFilter";
 import { useLevelFilter } from "../../../../hooks/useLevelFilter";
 import { useLoadCourses } from "../../../../hooks/useLoadCourses";
+import CourseLoadingIndicator from "../../dashboard/tabs/coures/components/course-loading-indicator";
 import { CourseItem } from "../student/CourseItem";
-import { EmptyState } from "@/app/components/EmptyCourseState";
 
 export default function SpillOverPage() {
   const { user } = use(UserContext);
 
-  const { isLoading, data: courses, error } = useLoadCourses().query({
+  const {
+    isLoading,
+    data: courses,
+    error,
+  } = useLoadCourses().query({
     enabled: true,
     courseId: user?.spilledCourses ?? [],
   });
@@ -52,11 +56,7 @@ export default function SpillOverPage() {
 
       <LevelFilter onSelect={onSelect} value={level} />
 
-      {isLoading && (
-        <Box p={6}>
-          <Spinner />
-        </Box>
-      )}
+      {isLoading && <CourseLoadingIndicator />}
 
       {!isLoading && error && (
         <ErrorState title="Failed to load courses" message={error.message} />

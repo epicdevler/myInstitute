@@ -14,14 +14,13 @@ import {
   Link,
   Separator,
   SimpleGrid,
-  Spinner,
-  Text,
+  Text
 } from "@chakra-ui/react";
 import { PlusIcon } from "lucide-react";
 import { use } from "react";
+import CourseLoadingIndicator from "../../../dashboard/tabs/coures/components/course-loading-indicator";
 import { CourseItem } from "../CourseItem";
 import { EmptyCourseState } from "../EmptyCourseState";
-import CourseLoadingIndicator from "../../../dashboard/tabs/coures/components/course-loading-indicator";
 
 export default function StudentCourses() {
   const { user } = use(UserContext);
