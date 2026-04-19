@@ -31,9 +31,11 @@ import { useSearchParams } from "next/navigation";
 import { ErrorState } from "@/app/components/ErrorState";
 import { LevelFilter } from "@/app/components/LevelFilter";
 import { useLevelFilter } from "@/app/hooks/useLevelFilter";
+import { useLoadProfile } from "@/app/hooks/useLoadProfile";
 
 export default function StudentRegisterCourse() {
   const { user } = use(UserContext);
+  const { invalidate: invalidateProfile } = useLoadProfile();
   const router = useRouter();
   const searchParams = useSearchParams();
   const registerType = searchParams.get("type");
@@ -76,6 +78,7 @@ export default function StudentRegisterCourse() {
         return;
       }
 
+      invalidateProfile();
       toaster.success({
         title: `${selectedCourse.length} Courses Updated`,
         description: "Redirecting to home page",

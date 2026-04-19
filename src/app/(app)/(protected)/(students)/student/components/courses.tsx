@@ -21,6 +21,7 @@ import { PlusIcon } from "lucide-react";
 import { use } from "react";
 import { CourseItem } from "../CourseItem";
 import { EmptyCourseState } from "../EmptyCourseState";
+import CourseLoadingIndicator from "../../../dashboard/tabs/coures/components/course-loading-indicator";
 
 export default function StudentCourses() {
   const { user } = use(UserContext);
@@ -52,13 +53,11 @@ export default function StudentCourses() {
         </Button>
       </HStack>
 
-      <LevelFilter onSelect={onSelect} value={level} />
+      <HStack justifyContent={"end"}>
+        <LevelFilter onSelect={onSelect} value={level} disabled={isLoading} />
+      </HStack>
 
-      {isLoading && (
-        <Box p={6}>
-          <Spinner />
-        </Box>
-      )}
+      {isLoading && <CourseLoadingIndicator />}
 
       {!isLoading && error && (
         <ErrorState title="Failed to load courses" message={error.message} />
