@@ -109,9 +109,13 @@ export class CourseRepository {
         };
       }
 
-      const snapshots = await Promise.all(courseIds.map(id => getDoc(doc(firestoreDB, this.courseCollection.path, id))))
+      const snapshot = await getDocs(
+        query(this.courseCollection, where(documentId(), "in", courseIds))
+      );
 
-      const courses = snapshots.map((_doc) => {
+      // const snapshots = await Promise.all(courseIds.map(id => getDoc(doc(firestoreDB, this.courseCollection.path, id))))
+
+      const courses = snapshot.docs.map((_doc) => {
         const id = _doc.id;
         const data = _doc.data();
         return {
